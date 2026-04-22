@@ -49,7 +49,8 @@ Lee cookie. Retorna nuevo access + rota cookie.
 Errores: `AUTH_REFRESH_INVALID`, `AUTH_REFRESH_EXPIRED`, `AUTH_REFRESH_REUSED` (revoca familia).
 
 ### `POST /auth/logout`
-Requiere access. Revoca familia del refresh actual.
+Lee la cookie de refresh y revoca su familia. No requiere access token —
+permite que un usuario cuyo access ya venció siga pudiendo cerrar sesión.
 Respuesta 204.
 
 ### `POST /auth/email/verify`

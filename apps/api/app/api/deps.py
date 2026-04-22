@@ -1,18 +1,23 @@
-"""Common FastAPI dependencies.
-
-Auth dependencies are stubs for now — full implementation lands with the auth
-feature PR. They already enforce 'default deny' on endpoints that declare them.
-"""
+"""Common FastAPI dependencies."""
 from __future__ import annotations
 
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Awaitable, Callable
 from typing import Annotated
 
-from fastapi import Depends
+from fastapi import Depends, Header
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import AsyncSessionLocal
-from app.exceptions import AuthError
+from app.exceptions import (
+    AccountSuspended,
+    AuthError,
+    AuthorizationError,
+    EmailNotVerified,
+    NotFoundError,
+)
+from app.models.user import User
+from app.repositories import users as users_repo
+from app.services.auth.tokens import decode_access_token
 
 
 async def get_db() -> AsyncIterator[AsyncSession]:
@@ -23,20 +28,47 @@ async def get_db() -> AsyncIterator[AsyncSession]:
 DbSession = Annotated[AsyncSession, Depends(get_db)]
 
 
-async def current_user() -> None:
-    # TODO(auth): extract bearer, verify JWT, load user, check status.
-    raise AuthError()
-
-
-async def current_verified_user() -> None:
-    # TODO(auth): current_user + check email_verified_at is not null.
-    raise AuthError()
-
-
-def require_role(_role: str):  # type: ignore[no-untyped-def]
-    async def _dep() -> None:
-        # TODO(auth): current_user + role check. On admin endpoints, raise 404
-        # via NotFoundError to avoid enumeration (see docs/architecture/security.md).
+async def current_user(
+    db: DbSession,
+    authorization: Annotated[str | None, Header()] = None,
+) -> User:
+    if not authorization or not authorization.lower().startswith("bearer "):
         raise AuthError()
+    token = authorization[7:].strip()
+    if not token:
+        raise AuthError()
+    payload = decode_access_token(token)
+    user_id = payload.get("sub")
+    if not isinstance(user_id, str):
+        raise AuthError()
+    user = await users_repo.get_by_id(db, user_id)
+    if user is None:
+        raise AuthError()
+    if user.status == "suspended":
+        raise AccountSuspended()
+    return user
+
+
+CurrentUser = Annotated[User, Depends(current_user)]
+
+
+async def current_verified_user(user: CurrentUser) -> User:
+    if user.email_verified_at is None:
+        raise EmailNotVerified()
+    return user
+
+
+CurrentVerifiedUser = Annotated[User, Depends(current_verified_user)]
+
+
+def require_role(role: str) -> Callable[[User], Awaitable[User]]:
+    async def _dep(user: CurrentUser) -> User:
+        if user.role != role:
+            # Admin endpoints return 404 to avoid enumeration
+            # (see docs/architecture/security.md).
+            if role == "admin":
+                raise NotFoundError()
+            raise AuthorizationError()
+        return user
 
     return _dep

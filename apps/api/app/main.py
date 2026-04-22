@@ -8,10 +8,12 @@ from collections.abc import AsyncIterator
 import structlog
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi.errors import RateLimitExceeded
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.responses import Response
+from starlette.responses import JSONResponse, Response
 
 from app.api.errors import register_exception_handlers
+from app.api.rate_limit import limiter
 from app.api.v1 import api_router
 from app.config import settings
 from app.logging import configure_logging
@@ -60,6 +62,22 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         return response
 
 
+async def _rate_limit_handler(request: Request, exc: RateLimitExceeded) -> JSONResponse:
+    request_id = request.headers.get("x-request-id") or None
+    return JSONResponse(
+        status_code=429,
+        content={
+            "error": {
+                "code": "RATE_LIMIT_EXCEEDED",
+                "message": "Estás yendo muy rápido. Esperá unos segundos.",
+                "details": {"retry_after": getattr(exc, "retry_after", None)},
+                "request_id": request_id,
+            }
+        },
+        headers={"Retry-After": str(getattr(exc, "retry_after", 60))},
+    )
+
+
 def create_app() -> FastAPI:
     app = FastAPI(
         title="p3rDiz API",
@@ -69,6 +87,9 @@ def create_app() -> FastAPI:
         openapi_url="/openapi.json",
         lifespan=lifespan,
     )
+
+    app.state.limiter = limiter
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_handler)
 
     app.add_middleware(RequestContextMiddleware)
     app.add_middleware(SecurityHeadersMiddleware)
