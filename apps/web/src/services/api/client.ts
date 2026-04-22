@@ -1,62 +1,93 @@
-/**
- * Lightweight fetch wrapper. The generated OpenAPI client will sit next to this
- * file in src/services/api/generated/ and will be called through this wrapper.
- *
- * Responsibilities (to implement as auth feature lands):
- *  - inject Authorization: Bearer <accessToken>
- *  - on 401, attempt one refresh via POST /auth/refresh and retry once
- *  - add Idempotency-Key on sensitive mutations
- *  - map error.code to a typed ApiError
- */
+import { ApiError } from '@/lib/errors';
+import { useAuthStore } from '@/stores/auth';
 
-const baseUrl = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '/v1';
+const BASE_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? 'http://localhost:8000/v1';
 
-export class ApiError extends Error {
-  constructor(
-    public code: string,
-    message: string,
-    public status: number,
-    public details?: Record<string, unknown>,
-    public requestId?: string,
-  ) {
-    super(message);
-    this.name = 'ApiError';
+let isRefreshing = false;
+let refreshPromise: Promise<string | null> | null = null;
+
+async function doRefresh(): Promise<string | null> {
+  try {
+    const res = await fetch(`${BASE_URL}/auth/refresh`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+    if (!res.ok) return null;
+    const body = (await res.json()) as { access_token: string };
+    return body.access_token;
+  } catch {
+    return null;
   }
 }
 
-export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${baseUrl}${path}`, {
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(init?.headers ?? {}),
-    },
-    ...init,
+async function refreshOnce(): Promise<string | null> {
+  if (isRefreshing) return refreshPromise;
+  isRefreshing = true;
+  refreshPromise = doRefresh().finally(() => {
+    isRefreshing = false;
+    refreshPromise = null;
   });
+  return refreshPromise;
+}
+
+export async function apiFetch<T>(
+  path: string,
+  init?: RequestInit & { skipRefresh?: boolean },
+): Promise<T> {
+  const { accessToken } = useAuthStore.getState();
+  const { skipRefresh, ...rest } = init ?? {};
+
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+    ...(rest.headers ?? {}),
+  };
+  if (accessToken) {
+    (headers as Record<string, string>)['Authorization'] = `Bearer ${accessToken}`;
+  }
+
+  let response = await fetch(`${BASE_URL}${path}`, {
+    ...rest,
+    credentials: 'include',
+    headers,
+  });
+
+  if (response.status === 401 && !skipRefresh) {
+    const newToken = await refreshOnce();
+    if (newToken) {
+      useAuthStore.getState().setAuth(useAuthStore.getState().user!, newToken);
+      (headers as Record<string, string>)['Authorization'] = `Bearer ${newToken}`;
+      response = await fetch(`${BASE_URL}${path}`, {
+        ...rest,
+        credentials: 'include',
+        headers,
+      });
+    } else {
+      useAuthStore.getState().clearAuth();
+      window.location.href = '/auth/ingresar';
+      throw new ApiError('AUTH_ERROR', 'Sesión expirada.', 401);
+    }
+  }
+
+  if (response.status === 204) return undefined as T;
 
   if (!response.ok) {
     let code = 'HTTP_ERROR';
-    let message = `Request failed with ${response.status}`;
+    let message = `Error ${response.status}`;
     let details: Record<string, unknown> | undefined;
-    let requestId: string | undefined;
     try {
       const body = (await response.json()) as {
-        error?: { code: string; message: string; details?: Record<string, unknown>; request_id?: string };
+        error?: { code: string; message: string; details?: Record<string, unknown> };
       };
       if (body.error) {
         code = body.error.code;
         message = body.error.message;
         details = body.error.details;
-        requestId = body.error.request_id;
       }
     } catch {
-      // ignore non-json error bodies
+      // ignore non-JSON bodies
     }
-    throw new ApiError(code, message, response.status, details, requestId);
+    throw new ApiError(code, message, response.status, details);
   }
 
-  if (response.status === 204) {
-    return undefined as T;
-  }
   return (await response.json()) as T;
 }
