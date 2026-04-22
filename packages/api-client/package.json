@@ -1,0 +1,11 @@
+{
+  "name": "@perdiz/api-client",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "generate": "echo 'TODO: generate from apps/api OpenAPI via openapi-typescript or similar'"
+  }
+}

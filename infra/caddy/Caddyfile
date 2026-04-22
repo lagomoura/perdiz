@@ -1,0 +1,28 @@
+# Reemplazar PERDIZ_DOMAIN por el dominio definitivo cuando esté disponible.
+# Ver docs/devops/deployment.md.
+
+{$PERDIZ_DOMAIN:perdiz.local} {
+  encode zstd gzip
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "DENY"
+    Referrer-Policy "strict-origin-when-cross-origin"
+    Permissions-Policy "geolocation=(), camera=(), microphone=()"
+  }
+  root * /srv/web
+  try_files {path} /index.html
+  file_server
+}
+
+api.{$PERDIZ_DOMAIN:perdiz.local} {
+  encode zstd gzip
+  reverse_proxy api:8000
+}
+
+uptime.{$PERDIZ_DOMAIN:perdiz.local} {
+  basicauth {
+    admin {$UPTIME_BASIC_AUTH_HASH}
+  }
+  reverse_proxy uptime-kuma:3001
+}

@@ -1,0 +1,40 @@
+:root {
+  /* Brand */
+  --brand-orange-500: 242 106 31;
+  --brand-orange-600: 217 85 12;
+  --brand-orange-100: 254 231 214;
+  --brand-graphite-900: 30 30 30;
+  --brand-graphite-700: 58 58 58;
+
+  /* Neutrals */
+  --neutral-0: 255 255 255;
+  --neutral-50: 247 247 248;
+  --neutral-100: 237 237 240;
+  --neutral-200: 217 217 222;
+  --neutral-400: 156 163 175;
+  --neutral-600: 75 85 99;
+  --neutral-900: 17 17 19;
+
+  /* State */
+  --success-500: 16 185 129;
+  --warning-500: 245 158 11;
+  --error-500: 239 68 68;
+  --info-500: 59 130 246;
+
+  /* Radii */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 20px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgb(17 17 19 / 0.06);
+  --shadow-md: 0 4px 12px rgb(17 17 19 / 0.08);
+  --shadow-lg: 0 12px 32px rgb(17 17 19 / 0.12);
+  --shadow-focus: 0 0 0 3px rgb(242 106 31 / 0.35);
+
+  /* Fonts */
+  --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}

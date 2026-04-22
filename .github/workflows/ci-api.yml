@@ -1,0 +1,65 @@
+name: CI — API
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/api/**'
+      - '.github/workflows/ci-api.yml'
+  pull_request:
+    paths:
+      - 'apps/api/**'
+      - '.github/workflows/ci-api.yml'
+
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: perdiz
+          POSTGRES_PASSWORD: perdiz
+          POSTGRES_DB: perdiz
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U perdiz"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+
+    defaults:
+      run:
+        working-directory: apps/api
+
+    env:
+      APP_ENV: development
+      DB_URL: postgresql+asyncpg://perdiz:perdiz@localhost:5432/perdiz
+      REDIS_URL: redis://localhost:6379/0
+      JWT_SECRET: ci-secret-not-used-for-real
+      ALLOWED_ORIGINS: http://localhost:5173
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Install deps
+        run: ~/.local/bin/uv sync --extra dev
+
+      - name: Ruff check
+        run: ~/.local/bin/uv run ruff check .
+
+      - name: Ruff format check
+        run: ~/.local/bin/uv run ruff format --check .
+
+      - name: Mypy
+        run: ~/.local/bin/uv run mypy app
+
+      - name: Pytest
+        run: ~/.local/bin/uv run pytest

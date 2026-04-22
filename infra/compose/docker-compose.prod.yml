@@ -1,0 +1,77 @@
+name: perdiz-prod
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - web_dist:/srv/web:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api
+
+  api:
+    image: ghcr.io/PLACEHOLDER_ORG/perdiz-api:latest
+    restart: unless-stopped
+    env_file: /opt/perdiz/.env.production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    expose:
+      - "8000"
+
+  worker:
+    image: ghcr.io/PLACEHOLDER_ORG/perdiz-api:latest
+    restart: unless-stopped
+    env_file: /opt/perdiz/.env.production
+    command: ["arq", "app.tasks.worker.WorkerSettings"]
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    env_file: /opt/perdiz/.env.production.postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U perdiz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    restart: unless-stopped
+    volumes:
+      - uptimedata:/app/data
+    expose:
+      - "3001"
+
+volumes:
+  pgdata:
+  redisdata:
+  web_dist:
+  caddy_data:
+  caddy_config:
+  uptimedata:
