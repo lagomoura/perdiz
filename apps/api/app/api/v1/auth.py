@@ -50,8 +50,13 @@ def _client_meta(request: Request) -> tuple[str | None, str | None]:
 
 @router.post("/register", status_code=201, response_model=RegisterOut)
 @limiter.limit("5/hour")
-async def register(request: Request, payload: RegisterIn, db: DbSession) -> RegisterOut:
-    _ = request  # required by slowapi signature
+async def register(
+    request: Request,
+    response: Response,
+    payload: RegisterIn,
+    db: DbSession,
+) -> RegisterOut:
+    _ = request, response  # both required by slowapi for header injection
     user = await auth_service.register_user(
         db,
         email=payload.email,
@@ -114,7 +119,13 @@ async def verify_email(payload: VerifyEmailIn, db: DbSession) -> EmailVerificati
 
 @router.post("/email/resend-verification", status_code=204)
 @limiter.limit("5/hour")
-async def resend_verification(request: Request, user: CurrentUser, db: DbSession) -> Response:
-    _ = request  # required by slowapi signature
+async def resend_verification(
+    request: Request,
+    response: Response,
+    user: CurrentUser,
+    db: DbSession,
+) -> Response:
+    _ = request  # required by slowapi for header injection
     await auth_service.resend_verification(db, user=user)
-    return Response(status_code=204)
+    response.status_code = 204
+    return response
