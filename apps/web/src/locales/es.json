@@ -1,0 +1,70 @@
+{
+  "auth": {
+    "login": {
+      "title": "Ingresá a tu cuenta",
+      "subtitle": "¿No tenés cuenta?",
+      "subtitleLink": "Registrate",
+      "email": "Email",
+      "password": "Contraseña",
+      "submit": "Ingresar",
+      "submitting": "Ingresando...",
+      "forgotPassword": "¿Olvidaste la contraseña?"
+    },
+    "register": {
+      "title": "Creá tu cuenta",
+      "subtitle": "¿Ya tenés cuenta?",
+      "subtitleLink": "Ingresá",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "email": "Email",
+      "password": "Contraseña",
+      "passwordHint": "Mínimo 10 caracteres, una letra y un número",
+      "submit": "Crear cuenta",
+      "submitting": "Creando cuenta...",
+      "successTitle": "Revisá tu email",
+      "successMessage": "Te enviamos un link para verificar tu cuenta."
+    },
+    "verify": {
+      "title": "Verificar email",
+      "verifying": "Verificando...",
+      "successTitle": "Email verificado",
+      "successMessage": "Tu cuenta está lista. Ya podés ingresar.",
+      "errorTitle": "Link inválido",
+      "errorMessage": "El link ya fue usado o venció.",
+      "resend": "Reenviar email de verificación",
+      "resending": "Reenviando...",
+      "resendSuccess": "Email reenviado. Revisá tu casilla.",
+      "noToken": "Ingresá desde el link que te enviamos por email."
+    },
+    "logout": "Cerrar sesión"
+  },
+  "account": {
+    "title": "Mi cuenta",
+    "verificationBanner": "Verificá tu email para poder comprar.",
+    "resendVerification": "Reenviar email",
+    "notVerified": "Email no verificado",
+    "verified": "Email verificado",
+    "name": "Nombre",
+    "email": "Email"
+  },
+  "nav": {
+    "catalog": "Catálogo",
+    "howItWorks": "Cómo funciona",
+    "contact": "Contacto",
+    "login": "Ingresar",
+    "register": "Registrarse",
+    "myAccount": "Mi cuenta"
+  },
+  "home": {
+    "headline": "Imaginá.",
+    "headlineAccent": "Imprimimos.",
+    "subtitle": "Soluciones 3D con precisión técnica y alma creativa.",
+    "ctaCatalog": "Ver catálogo",
+    "ctaCustomize": "Personalizar",
+    "comingSoon": "Catálogo en construcción."
+  },
+  "errors": {
+    "generic": "Algo salió mal. Probá de nuevo en unos segundos.",
+    "notFound": "No encontramos la página que buscás."
+  }
+}
