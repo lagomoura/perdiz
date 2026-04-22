@@ -1,5 +1,8 @@
 """FastAPI exception handlers mapping AppError subclasses to stable responses."""
+
 from __future__ import annotations
+
+from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
@@ -10,8 +13,11 @@ from app.exceptions import AppError
 
 
 def _error_body(
-    code: str, message: str, details: dict | None, request_id: str | None
-) -> dict:  # type: ignore[type-arg]
+    code: str,
+    message: str,
+    details: dict[str, Any] | None,
+    request_id: str | None,
+) -> dict[str, Any]:
     return {
         "error": {
             "code": code,
