@@ -1,4 +1,5 @@
 """Rate limiting via slowapi backed by Redis."""
+
 from __future__ import annotations
 
 from slowapi import Limiter

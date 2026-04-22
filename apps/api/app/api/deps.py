@@ -1,4 +1,5 @@
 """Common FastAPI dependencies."""
+
 from __future__ import annotations
 
 from collections.abc import AsyncIterator, Awaitable, Callable

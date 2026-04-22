@@ -1,4 +1,5 @@
 """Pydantic v2 schemas for auth endpoints."""
+
 from __future__ import annotations
 
 from datetime import datetime
@@ -26,7 +27,7 @@ class UserPublic(_Strict):
     last_name: str | None
 
     @classmethod
-    def from_model(cls, user) -> "UserPublic":  # type: ignore[no-untyped-def]
+    def from_model(cls, user) -> UserPublic:  # type: ignore[no-untyped-def]
         return cls(
             id=user.id,
             email=user.email,

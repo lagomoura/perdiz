@@ -8,9 +8,7 @@ async def _login(client: AsyncClient, email: str = "refresh@ejemplo.com") -> str
         "/v1/auth/register",
         json={"email": email, "password": "ValidPass123", "first_name": None, "last_name": None},
     )
-    r = await client.post(
-        "/v1/auth/login", json={"email": email, "password": "ValidPass123"}
-    )
+    r = await client.post("/v1/auth/login", json={"email": email, "password": "ValidPass123"})
     return r.cookies["refresh_token"]
 
 
@@ -33,20 +31,17 @@ async def test_refresh_without_cookie_returns_401(client: AsyncClient) -> None:
 
 async def test_refresh_reuse_revokes_family(client: AsyncClient) -> None:
     old_cookie = await _login(client, email="reuse@ejemplo.com")
-    # First refresh succeeds
+    # First refresh succeeds and rotates the cookie.
     r1 = await client.post("/v1/auth/refresh")
     assert r1.status_code == 200
     rotated_cookie = r1.cookies["refresh_token"]
-    # Replay the OLD cookie: reuse must be detected.
     client.cookies.clear()
-    client.cookies.set("refresh_token", old_cookie, domain="test", path="/v1/auth")
-    r2 = await client.post("/v1/auth/refresh")
+    # Replay the OLD cookie explicitly: reuse must be detected.
+    r2 = await client.post("/v1/auth/refresh", cookies={"refresh_token": old_cookie})
     assert r2.status_code == 401
     assert r2.json()["error"]["code"] == "AUTH_REFRESH_REUSED"
     # The cookie issued by r1 is also invalid now (family revoked).
-    client.cookies.clear()
-    client.cookies.set("refresh_token", rotated_cookie, domain="test", path="/v1/auth")
-    r3 = await client.post("/v1/auth/refresh")
+    r3 = await client.post("/v1/auth/refresh", cookies={"refresh_token": rotated_cookie})
     assert r3.status_code == 401
 
 

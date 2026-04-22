@@ -5,22 +5,22 @@ Strategy:
 - Per-test autouse cleanup TRUNCATEs everything.
 - Per-test autouse patches lockout.Redis with fakeredis and disables slowapi.
 """
+
 from __future__ import annotations
 
 from collections.abc import AsyncIterator
 
 import pytest
 import pytest_asyncio
-from fakeredis.aioredis import FakeRedis
-from httpx import ASGITransport, AsyncClient
-from sqlalchemy import text
-
 from app.api.rate_limit import limiter
 from app.config import settings
 from app.db.base import Base
 from app.db.session import AsyncSessionLocal, engine
 from app.main import app
 from app.services.auth import lockout
+from fakeredis.aioredis import FakeRedis
+from httpx import ASGITransport, AsyncClient
+from sqlalchemy import text
 
 
 @pytest_asyncio.fixture(scope="session", loop_scope="session", autouse=True)

@@ -3,9 +3,10 @@
 Endpoints delegate to these functions; these functions coordinate repositories
 and sub-services. No FastAPI imports here.
 """
+
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,7 +15,6 @@ from app.exceptions import (
     AccountLocked,
     AccountSuspended,
     BusinessRuleViolation,
-    DomainError,
     InvalidCredentials,
     RefreshExpired,
     RefreshInvalid,
@@ -22,8 +22,6 @@ from app.exceptions import (
     ResourceConflict,
     ValidationError,
 )
-from app.models.email_verification_token import EmailVerificationToken
-from app.models.refresh_token import RefreshToken
 from app.models.user import User
 from app.repositories import email_verification_tokens as evt_repo
 from app.repositories import refresh_tokens as rt_repo
@@ -56,9 +54,7 @@ async def register_user(
         ) from e
 
     plain, token_hash, expires = tokens.generate_email_verification_token()
-    await evt_repo.create(
-        db, user_id=user.id, token_hash=token_hash, expires_at=expires
-    )
+    await evt_repo.create(db, user_id=user.id, token_hash=token_hash, expires_at=expires)
     await db.commit()
     await emails.send_verification_email(to=user.email, token_plain=plain)
     return user
@@ -115,7 +111,7 @@ async def rotate_refresh(
     if record is None:
         raise RefreshInvalid()
 
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now(tz=UTC)
 
     if record.revoked_at is not None:
         # Reuse detected: revoke the whole family.
@@ -166,15 +162,11 @@ async def verify_email(db: AsyncSession, *, token_plain: str) -> User:
             "El link de verificación no es válido o ya fue usado.",
             details={"field": "token"},
         )
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now(tz=UTC)
     if record.used_at is not None:
-        raise ValidationError(
-            "Este link ya fue usado.", details={"field": "token"}
-        )
+        raise ValidationError("Este link ya fue usado.", details={"field": "token"})
     if record.expires_at <= now:
-        raise ValidationError(
-            "El link venció. Pedí uno nuevo.", details={"field": "token"}
-        )
+        raise ValidationError("El link venció. Pedí uno nuevo.", details={"field": "token"})
     user = await users_repo.get_by_id(db, record.user_id)
     if user is None:
         raise ValidationError("No encontramos la cuenta.", details={"field": "token"})
@@ -189,24 +181,16 @@ async def resend_verification(db: AsyncSession, *, user: User) -> None:
     if user.email_verified_at is not None:
         raise BusinessRuleViolation("Tu email ya está verificado.")
     plain, token_hash, expires = tokens.generate_email_verification_token()
-    await evt_repo.create(
-        db, user_id=user.id, token_hash=token_hash, expires_at=expires
-    )
+    await evt_repo.create(db, user_id=user.id, token_hash=token_hash, expires_at=expires)
     await db.commit()
     await emails.send_verification_email(to=user.email, token_plain=plain)
 
 
 __all__ = [
-    "register_user",
     "authenticate",
-    "rotate_refresh",
     "logout",
-    "verify_email",
+    "register_user",
     "resend_verification",
+    "rotate_refresh",
+    "verify_email",
 ]
-
-
-# Unused import guard (makes mypy happy about DomainError re-export if needed).
-_ = DomainError
-_ = EmailVerificationToken
-_ = RefreshToken

@@ -1,4 +1,5 @@
 """Structured logging with structlog (JSON output in non-dev)."""
+
 from __future__ import annotations
 
 import logging

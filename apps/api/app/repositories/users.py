@@ -1,4 +1,5 @@
 """User repository — thin DB access layer."""
+
 from __future__ import annotations
 
 from sqlalchemy import select
@@ -8,9 +9,7 @@ from app.models.user import User
 
 
 async def get_by_email(db: AsyncSession, email: str) -> User | None:
-    result = await db.execute(
-        select(User).where(User.email == email, User.deleted_at.is_(None))
-    )
+    result = await db.execute(select(User).where(User.email == email, User.deleted_at.is_(None)))
     return result.scalar_one_or_none()
 
 

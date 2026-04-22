@@ -5,6 +5,7 @@ Revises:
 Create Date: 2026-04-22
 
 """
+
 from __future__ import annotations
 
 from collections.abc import Sequence
@@ -49,8 +50,12 @@ def upgrade() -> None:
         sa.Column("last_name", sa.Text(), nullable=True),
         sa.Column("phone", sa.Text(), nullable=True),
         sa.Column("dni", sa.Text(), nullable=True),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
-        sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+        sa.Column(
+            "created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
+        ),
+        sa.Column(
+            "updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
+        ),
         sa.Column("deleted_at", sa.DateTime(timezone=True), nullable=True),
         sa.UniqueConstraint("email", name="uq_users_email"),
     )
@@ -74,7 +79,9 @@ def upgrade() -> None:
             sa.ForeignKey("refresh_tokens.id"),
             nullable=True,
         ),
-        sa.Column("issued_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+        sa.Column(
+            "issued_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
+        ),
         sa.Column("expires_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("revoked_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("user_agent", sa.Text(), nullable=True),
@@ -95,7 +102,9 @@ def upgrade() -> None:
         sa.Column("token_hash", sa.String(length=64), nullable=False, unique=True),
         sa.Column("expires_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("used_at", sa.DateTime(timezone=True), nullable=True),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+        sa.Column(
+            "created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
+        ),
     )
     op.create_index(
         "ix_email_verification_tokens_user_id", "email_verification_tokens", ["user_id"]

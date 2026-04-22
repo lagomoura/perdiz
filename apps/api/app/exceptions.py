@@ -3,6 +3,7 @@
 Every user-facing error must map to a code listed here. Frontend consumes the
 code to render localized messages.
 """
+
 from __future__ import annotations
 
 from typing import Any

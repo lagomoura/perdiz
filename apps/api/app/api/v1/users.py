@@ -1,4 +1,5 @@
 """Users endpoints. Currently only /me; profile CRUD lands in a later PR."""
+
 from __future__ import annotations
 
 from fastapi import APIRouter

@@ -1,4 +1,5 @@
 """Declarative base + shared mixins (ULID PK, timestamps, soft-delete)."""
+
 from __future__ import annotations
 
 from datetime import datetime
@@ -14,9 +15,7 @@ class Base(DeclarativeBase):
 
 
 class ULIDMixin:
-    id: Mapped[str] = mapped_column(
-        String(26), primary_key=True, default=new_ulid
-    )
+    id: Mapped[str] = mapped_column(String(26), primary_key=True, default=new_ulid)
 
 
 class TimestampMixin:
@@ -32,6 +31,4 @@ class TimestampMixin:
 
 
 class SoftDeleteMixin:
-    deleted_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

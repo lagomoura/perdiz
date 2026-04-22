@@ -3,6 +3,7 @@
 After 10 failed attempts on the same email within a 15-minute sliding window,
 the account is locked for 30 minutes. A successful login clears the counter.
 """
+
 from __future__ import annotations
 
 from typing import Protocol
@@ -24,13 +25,16 @@ class _RedisLike(Protocol):
     async def setex(self, key: str, seconds: int, value: str) -> bool: ...
 
 
-_client: aioredis.Redis | None = None
+_client: _RedisLike | None = None
 
 
 def get_redis() -> _RedisLike:
-    global _client
+    global _client  # noqa: PLW0603 — module-level singleton is intentional here
     if _client is None:
-        _client = aioredis.from_url(settings.redis_url, decode_responses=True)
+        _client = aioredis.from_url(  # type: ignore[no-untyped-call]
+            settings.redis_url, decode_responses=True
+        )
+    assert _client is not None
     return _client
 
 

@@ -1,4 +1,5 @@
 """Auth endpoints: register, login, refresh, logout, email verification."""
+
 from __future__ import annotations
 
 from fastapi import APIRouter, Cookie, Request, Response
@@ -6,6 +7,7 @@ from fastapi import APIRouter, Cookie, Request, Response
 from app.api.deps import CurrentUser, DbSession
 from app.api.rate_limit import limiter
 from app.config import settings
+from app.exceptions import RefreshInvalid
 from app.schemas.auth import (
     EmailVerificationOut,
     LoginIn,
@@ -62,9 +64,7 @@ async def register(request: Request, payload: RegisterIn, db: DbSession) -> Regi
 
 @router.post("/login", response_model=LoginOut)
 @limiter.limit("20/hour")
-async def login(
-    request: Request, payload: LoginIn, response: Response, db: DbSession
-) -> LoginOut:
+async def login(request: Request, payload: LoginIn, response: Response, db: DbSession) -> LoginOut:
     ua, ip = _client_meta(request)
     user, access, refresh_plain = await auth_service.authenticate(
         db, email=payload.email, password=payload.password, user_agent=ua, ip=ip
@@ -81,8 +81,6 @@ async def refresh(
     db: DbSession,
     refresh_token: str | None = Cookie(default=None, alias=REFRESH_COOKIE_NAME),
 ) -> RefreshOut:
-    from app.exceptions import RefreshInvalid
-
     if not refresh_token:
         raise RefreshInvalid()
     ua, ip = _client_meta(request)
@@ -116,9 +114,7 @@ async def verify_email(payload: VerifyEmailIn, db: DbSession) -> EmailVerificati
 
 @router.post("/email/resend-verification", status_code=204)
 @limiter.limit("5/hour")
-async def resend_verification(
-    request: Request, user: CurrentUser, db: DbSession
-) -> Response:
+async def resend_verification(request: Request, user: CurrentUser, db: DbSession) -> Response:
     _ = request  # required by slowapi signature
     await auth_service.resend_verification(db, user=user)
     return Response(status_code=204)

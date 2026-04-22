@@ -1,20 +1,20 @@
 """Alembic async env. Reads DB_URL from app.config."""
+
 from __future__ import annotations
 
 import asyncio
 from logging.config import fileConfig
 
 from alembic import context
-from sqlalchemy import pool
-from sqlalchemy.engine import Connection
-from sqlalchemy.ext.asyncio import async_engine_from_config
-
-from app.config import settings
-from app.db.base import Base
 
 # Import all models here so Alembic sees them in Base.metadata.
 # Each new model file should be imported here.
 from app import models  # noqa: F401
+from app.config import settings
+from app.db.base import Base
+from sqlalchemy import pool
+from sqlalchemy.engine import Connection
+from sqlalchemy.ext.asyncio import async_engine_from_config
 
 config = context.config
 if config.config_file_name is not None:

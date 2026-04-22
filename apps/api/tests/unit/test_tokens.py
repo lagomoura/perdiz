@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-import pytest
+from datetime import UTC, datetime
 
+import pytest
 from app.exceptions import AuthError
 from app.services.auth import tokens
 
@@ -37,6 +38,4 @@ def test_email_verification_token_has_24h_expiry() -> None:
     assert len(plain) >= 20
     assert hashed == tokens.sha256_hex(plain)
     # Not asserting exact expiry; just that it's in the future.
-    from datetime import datetime, timezone
-
-    assert expires > datetime.now(tz=timezone.utc)
+    assert expires > datetime.now(tz=UTC)

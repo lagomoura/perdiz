@@ -4,6 +4,7 @@ In dev (no RESEND_API_KEY), the verification link is logged to stdout so the
 developer can copy-paste it into the browser. Resend integration lands in a
 follow-up PR.
 """
+
 from __future__ import annotations
 
 import structlog

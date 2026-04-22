@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import pytest
-
 from app.exceptions import ValidationError
 from app.services.auth import passwords
 
@@ -23,10 +22,10 @@ def test_validate_password_accepts_ok() -> None:
 @pytest.mark.parametrize(
     "pw",
     [
-        "short1a",          # < 10
-        "a" * 129 + "1",    # > 128
-        "onlyletters!",      # no digit
-        "1234567890",        # no letter
+        "short1a",  # < 10
+        "a" * 129 + "1",  # > 128
+        "onlyletters!",  # no digit
+        "1234567890",  # no letter
     ],
 )
 def test_validate_password_rejects(pw: str) -> None:

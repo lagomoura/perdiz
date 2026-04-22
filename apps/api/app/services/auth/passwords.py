@@ -1,4 +1,5 @@
 """Password hashing + verification with argon2id."""
+
 from __future__ import annotations
 
 import re

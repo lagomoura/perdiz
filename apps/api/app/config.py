@@ -1,10 +1,10 @@
 """Centralised settings. The app fails to start if required vars are missing."""
+
 from __future__ import annotations
 
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 Env = Literal["development", "staging", "production"]
@@ -87,7 +87,8 @@ class Settings(BaseSettings):
 
 @lru_cache
 def _get_settings() -> Settings:
-    return Settings()
+    # Settings is populated entirely from env / .env files by pydantic-settings.
+    return Settings()  # type: ignore[call-arg]
 
 
 settings: Settings = _get_settings()

@@ -1,4 +1,5 @@
 """Health endpoints."""
+
 from __future__ import annotations
 
 from fastapi import APIRouter
@@ -21,7 +22,7 @@ async def health_deep(db: DbSession) -> dict:  # type: ignore[type-arg]
     try:
         await db.execute(text("SELECT 1"))
         checks["postgres"] = "ok"
-    except Exception:  # noqa: BLE001
+    except Exception:
         checks["postgres"] = "fail"
         status = "degraded"
     # TODO: redis and R2 checks land with their services.

@@ -1,9 +1,10 @@
 """JWT access tokens + opaque refresh tokens (with SHA-256 hash storage)."""
+
 from __future__ import annotations
 
 import hashlib
 import secrets
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import TypedDict
 from uuid import uuid4
 
@@ -28,7 +29,7 @@ class AccessTokenPayload(TypedDict):
 
 
 def create_access_token(user_id: str, role: str) -> str:
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now(tz=UTC)
     payload: AccessTokenPayload = {
         "sub": user_id,
         "role": role,
@@ -38,7 +39,8 @@ def create_access_token(user_id: str, role: str) -> str:
         "iss": _ISSUER,
         "aud": _AUDIENCE,
     }
-    return jwt.encode(dict(payload), settings.jwt_secret, algorithm=_ALG)
+    encoded: str = jwt.encode(dict(payload), settings.jwt_secret, algorithm=_ALG)
+    return encoded
 
 
 def decode_access_token(token: str) -> AccessTokenPayload:
@@ -48,13 +50,14 @@ def decode_access_token(token: str) -> AccessTokenPayload:
     last_error: JWTError | None = None
     for sec in secrets_to_try:
         try:
-            return jwt.decode(  # type: ignore[return-value]
+            decoded: AccessTokenPayload = jwt.decode(
                 token,
                 sec,
                 algorithms=[_ALG],
                 audience=_AUDIENCE,
                 issuer=_ISSUER,
             )
+            return decoded
         except JWTError as e:
             last_error = e
             continue
@@ -74,11 +77,11 @@ def hash_refresh_token(plain: str) -> str:
 
 
 def refresh_expires_at() -> datetime:
-    return datetime.now(tz=timezone.utc) + timedelta(seconds=settings.jwt_refresh_ttl_seconds)
+    return datetime.now(tz=UTC) + timedelta(seconds=settings.jwt_refresh_ttl_seconds)
 
 
 def generate_email_verification_token() -> tuple[str, str, datetime]:
     """Return (plain, hashed, expires_at). Plain goes in the email link."""
     plain = secrets.token_urlsafe(32)
-    expires = datetime.now(tz=timezone.utc) + timedelta(hours=24)
+    expires = datetime.now(tz=UTC) + timedelta(hours=24)
     return plain, sha256_hex(plain), expires

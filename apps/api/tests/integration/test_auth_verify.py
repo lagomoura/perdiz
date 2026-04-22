@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from httpx import AsyncClient
-from sqlalchemy import select
+from datetime import datetime
 
 from app.db.session import AsyncSessionLocal
 from app.models.email_verification_token import EmailVerificationToken
 from app.models.user import User
 from app.services.auth import tokens as token_service
+from httpx import AsyncClient
+from sqlalchemy import select
 
 
 async def _register_and_get_token_hash(email: str) -> str:
@@ -33,18 +34,12 @@ async def test_verify_email_flow(client: AsyncClient) -> None:
     )
     # We don't know the plain token (it was emailed); for tests we inject one
     # directly via the service to cover the verify endpoint.
-    from datetime import datetime
-
     plain, token_hash, expires = token_service.generate_email_verification_token()
     async with AsyncSessionLocal() as s:
         user = (
             await s.execute(select(User).where(User.email == "verify@ejemplo.com"))
         ).scalar_one()
-        s.add(
-            EmailVerificationToken(
-                user_id=user.id, token_hash=token_hash, expires_at=expires
-            )
-        )
+        s.add(EmailVerificationToken(user_id=user.id, token_hash=token_hash, expires_at=expires))
         await s.commit()
 
     r = await client.post("/v1/auth/email/verify", json={"token": plain})

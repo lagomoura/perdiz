@@ -1,9 +1,10 @@
 """FastAPI app factory + entrypoint."""
+
 from __future__ import annotations
 
 import uuid
-from contextlib import asynccontextmanager
 from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 
 import structlog
 from fastapi import FastAPI, Request
@@ -62,19 +63,20 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         return response
 
 
-async def _rate_limit_handler(request: Request, exc: RateLimitExceeded) -> JSONResponse:
+async def _rate_limit_handler(request: Request, exc: Exception) -> Response:
     request_id = request.headers.get("x-request-id") or None
+    retry_after = getattr(exc, "retry_after", None)
     return JSONResponse(
         status_code=429,
         content={
             "error": {
                 "code": "RATE_LIMIT_EXCEEDED",
                 "message": "Estás yendo muy rápido. Esperá unos segundos.",
-                "details": {"retry_after": getattr(exc, "retry_after", None)},
+                "details": {"retry_after": retry_after},
                 "request_id": request_id,
             }
         },
-        headers={"Retry-After": str(getattr(exc, "retry_after", 60))},
+        headers={"Retry-After": str(retry_after or 60)},
     )
 
 

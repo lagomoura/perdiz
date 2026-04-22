@@ -1,4 +1,5 @@
 """Email verification token model."""
+
 from __future__ import annotations
 
 from datetime import datetime
