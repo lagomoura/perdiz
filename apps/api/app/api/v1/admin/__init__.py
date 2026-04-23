@@ -8,6 +8,7 @@ from fastapi import APIRouter
 
 from app.api.v1.admin import (
     categories,
+    coupons,
     customization,
     discounts,
     product_images,
@@ -22,3 +23,4 @@ admin_router.include_router(customization.router)
 admin_router.include_router(product_images.router)
 admin_router.include_router(discounts.router)
 admin_router.include_router(uploads.router)
+admin_router.include_router(coupons.router)
