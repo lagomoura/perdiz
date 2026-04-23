@@ -12,6 +12,7 @@ from app.api.v1.admin import (
     discounts,
     product_images,
     products,
+    uploads,
 )
 
 admin_router = APIRouter()
@@ -20,3 +21,4 @@ admin_router.include_router(products.router)
 admin_router.include_router(customization.router)
 admin_router.include_router(product_images.router)
 admin_router.include_router(discounts.router)
+admin_router.include_router(uploads.router)

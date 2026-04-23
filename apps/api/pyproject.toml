@@ -63,7 +63,17 @@ disallow_any_generics = true
 plugins = []
 
 [[tool.mypy.overrides]]
-module = ["trimesh.*", "resend.*", "arq.*", "jose.*", "jose", "fakeredis.*"]
+module = [
+  "trimesh.*",
+  "resend.*",
+  "arq.*",
+  "jose.*",
+  "jose",
+  "fakeredis.*",
+  "boto3",
+  "boto3.*",
+  "botocore.*",
+]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
