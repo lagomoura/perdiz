@@ -343,6 +343,89 @@ async def test_commit_rejects_corrupt_stl(client: AsyncClient) -> None:
 # --- Audit ------------------------------------------------------------------
 
 
+async def test_stl_commit_enqueues_conversion(
+    client: AsyncClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """After a successful STL commit, the admin flow hands the id off to the
+    STL→GLB conversion queue. We patch the helper and assert the call; the
+    queue/worker mechanics are covered by ``test_stl_to_glb``.
+    """
+    calls: list[str] = []
+
+    async def _spy(media_file_id: str) -> None:
+        calls.append(media_file_id)
+
+    monkeypatch.setattr("app.services.media.uploads.media_queue.enqueue_stl_conversion", _spy)
+
+    h = auth_header(await register_and_promote_admin(client))
+    stl = _make_binary_stl(triangles=10)
+    presign_body = (
+        await client.post(
+            "/v1/admin/uploads/presign",
+            json={
+                "kind": "model_stl",
+                "mime_type": "model/stl",
+                "size_bytes": len(stl),
+                "filename": "enqueue.stl",
+            },
+            headers=h,
+        )
+    ).json()
+    await _put_to_minio(presign_body["upload_url"], stl, "model/stl")
+
+    commit = await client.post(
+        "/v1/admin/uploads/commit",
+        json={
+            "storage_key": presign_body["storage_key"],
+            "kind": "model_stl",
+            "mime_type": "model/stl",
+            "size_bytes": len(stl),
+        },
+        headers=h,
+    )
+    assert commit.status_code == 201
+    media_id = commit.json()["media_file"]["id"]
+    assert calls == [media_id]
+
+
+async def test_image_commit_does_not_enqueue_conversion(
+    client: AsyncClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    calls: list[str] = []
+
+    async def _spy(media_file_id: str) -> None:
+        calls.append(media_file_id)
+
+    monkeypatch.setattr("app.services.media.uploads.media_queue.enqueue_stl_conversion", _spy)
+
+    h = auth_header(await register_and_promote_admin(client))
+    presign_body = (
+        await client.post(
+            "/v1/admin/uploads/presign",
+            json={
+                "kind": "image",
+                "mime_type": "image/png",
+                "size_bytes": len(_PNG_1X1),
+                "filename": "a.png",
+            },
+            headers=h,
+        )
+    ).json()
+    await _put_to_minio(presign_body["upload_url"], _PNG_1X1, "image/png")
+    commit = await client.post(
+        "/v1/admin/uploads/commit",
+        json={
+            "storage_key": presign_body["storage_key"],
+            "kind": "image",
+            "mime_type": "image/png",
+            "size_bytes": len(_PNG_1X1),
+        },
+        headers=h,
+    )
+    assert commit.status_code == 201
+    assert calls == []
+
+
 async def test_commit_is_audited(client: AsyncClient) -> None:
     h = auth_header(await register_and_promote_admin(client))
     presign_body = (
