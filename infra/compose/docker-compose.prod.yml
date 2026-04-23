@@ -7,6 +7,9 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    environment:
+      PERDIZ_DOMAIN: ${PERDIZ_DOMAIN:-perdiz.local}
+      UPTIME_BASIC_AUTH_HASH: ${UPTIME_BASIC_AUTH_HASH:-}
     volumes:
       - ../caddy/Caddyfile:/etc/caddy/Caddyfile:ro
       - web_dist:/srv/web:ro
@@ -16,7 +19,9 @@ services:
       - api
 
   api:
-    image: ghcr.io/PLACEHOLDER_ORG/perdiz-api:latest
+    build:
+      context: ../../apps/api
+    image: perdiz-api:local
     restart: unless-stopped
     env_file: /opt/perdiz/.env.production
     depends_on:
@@ -28,7 +33,9 @@ services:
       - "8000"
 
   worker:
-    image: ghcr.io/PLACEHOLDER_ORG/perdiz-api:latest
+    build:
+      context: ../../apps/api
+    image: perdiz-api:local
     restart: unless-stopped
     env_file: /opt/perdiz/.env.production
     command: ["arq", "app.tasks.worker.WorkerSettings"]

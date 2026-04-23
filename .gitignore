@@ -29,6 +29,7 @@ test-results/
 .env.*.local
 .env.staging
 .env.production
+.env.production.*
 
 # IDE
 .vscode/

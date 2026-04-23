@@ -15,9 +15,9 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh \
 
 WORKDIR /app
 
-COPY pyproject.toml ./
-RUN uv pip install --system --no-deps -r <(uv pip compile --quiet pyproject.toml) \
- || uv pip install --system .
+COPY pyproject.toml uv.lock ./
+RUN uv pip compile pyproject.toml -o /tmp/requirements.txt \
+ && uv pip install --system -r /tmp/requirements.txt
 
 COPY alembic.ini ./
 COPY alembic ./alembic
