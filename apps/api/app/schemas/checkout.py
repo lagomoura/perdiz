@@ -1,8 +1,10 @@
-"""Checkout + order schemas."""
+"""Checkout schemas — request/response for the checkout endpoint.
+
+Order list/detail schemas live in ``app/schemas/orders.py``.
+"""
 
 from __future__ import annotations
 
-from datetime import datetime
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -42,26 +44,3 @@ class CheckoutOut(_Strict):
     redirect_url: str
     total_cents: int
     currency: Literal["ARS"] = "ARS"
-
-
-class OrderItemOut(_Strict):
-    id: str
-    product_id: str
-    product_name_snapshot: str
-    quantity: int
-    unit_price_cents: int
-    modifiers_total_cents: int
-    line_total_cents: int
-
-
-class OrderOut(_Strict):
-    id: str
-    status: str
-    subtotal_cents: int
-    discount_cents: int
-    shipping_cents: int
-    total_cents: int
-    currency: str
-    placed_at: datetime
-    paid_at: datetime | None
-    items: list[OrderItemOut]

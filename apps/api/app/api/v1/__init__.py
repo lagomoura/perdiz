@@ -10,6 +10,7 @@ from app.api.v1 import (
     categories,
     checkout,
     health,
+    orders,
     products,
     uploads,
     users,
@@ -26,5 +27,6 @@ api_router.include_router(products.router)
 api_router.include_router(uploads.router)
 api_router.include_router(cart.router)
 api_router.include_router(checkout.router)
+api_router.include_router(orders.router)
 api_router.include_router(webhooks.router)
 api_router.include_router(admin_router)

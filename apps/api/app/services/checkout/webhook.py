@@ -17,7 +17,9 @@ from sqlalchemy.orm.attributes import flag_modified
 from app.exceptions import NotFoundError
 from app.models.order import Order
 from app.models.payment import Payment
+from app.models.user import User
 from app.repositories import orders as orders_repo
+from app.services.emails import orders as order_emails
 from app.services.payments.base import WebhookEvent
 
 
@@ -47,8 +49,10 @@ async def process_event(db: AsyncSession, *, provider_name: str, event: WebhookE
     flag_modified(payment, "raw_webhook_events")
     payment.status = event.status
 
-    await _sync_order_status(db, order=order, payment_status=event.status)
+    transition = await _sync_order_status(db, order=order, payment_status=event.status)
     await db.commit()
+    if transition is not None:
+        await _notify_user(db, order=order, transition=transition)
     return payment
 
 
@@ -68,7 +72,7 @@ def _is_duplicate(payment: Payment, event_id: str) -> bool:
     return any(evt.get("event_id") == event_id for evt in payment.raw_webhook_events)
 
 
-async def _sync_order_status(db: AsyncSession, *, order: Order, payment_status: str) -> None:
+async def _sync_order_status(db: AsyncSession, *, order: Order, payment_status: str) -> str | None:
     target: str | None = None
     if payment_status == "approved" and order.status == "pending_payment":
         target = "paid"
@@ -77,7 +81,7 @@ async def _sync_order_status(db: AsyncSession, *, order: Order, payment_status: 
     elif payment_status == "refunded" and order.status in {"paid", "queued", "printing"}:
         target = "refunded"
     if target is None:
-        return
+        return None
 
     now = datetime.now(tz=UTC)
     previous = order.status
@@ -97,3 +101,16 @@ async def _sync_order_status(db: AsyncSession, *, order: Order, payment_status: 
         changed_by=None,
         note=f"webhook.{payment_status}",
     )
+    return target
+
+
+async def _notify_user(db: AsyncSession, *, order: Order, transition: str) -> None:
+    user = await db.get(User, order.user_id)
+    if user is None:
+        return
+    if transition == "paid":
+        await order_emails.send_order_confirmed(to=user.email, order=order)
+    elif transition == "cancelled":
+        await order_emails.send_order_cancelled(to=user.email, order=order)
+    elif transition == "refunded":
+        await order_emails.send_order_refunded(to=user.email, order=order)

@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import base64
+from datetime import datetime
 from typing import Any
 
-from sqlalchemy import select
+from sqlalchemy import and_, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.exceptions import ValidationError
 from app.models.coupon_redemption import CouponRedemption
 from app.models.order import Order
 from app.models.order_item import OrderItem
@@ -79,6 +82,92 @@ async def list_items_for_order(db: AsyncSession, order_id: str) -> list[OrderIte
         select(OrderItem).where(OrderItem.order_id == order_id).order_by(OrderItem.id)
     )
     return list(rows.scalars().all())
+
+
+async def list_for_user(
+    db: AsyncSession,
+    *,
+    user_id: str,
+    limit: int,
+    cursor: str | None,
+) -> list[Order]:
+    """Paginated ``placed_at DESC`` + ``id DESC`` scan. Cursor encodes the
+    last row's ``(placed_at, id)`` so repeated rows at the same millisecond
+    don't get duplicated on the boundary.
+    """
+    stmt = select(Order).where(Order.user_id == user_id)
+    if cursor:
+        cursor_placed_at, cursor_order_id = _decode_cursor(cursor)
+        stmt = stmt.where(
+            or_(
+                Order.placed_at < cursor_placed_at,
+                and_(Order.placed_at == cursor_placed_at, Order.id < cursor_order_id),
+            )
+        )
+    stmt = stmt.order_by(Order.placed_at.desc(), Order.id.desc()).limit(limit)
+    return list((await db.execute(stmt)).scalars().all())
+
+
+async def get_for_user(db: AsyncSession, *, order_id: str, user_id: str) -> Order | None:
+    row = await db.execute(select(Order).where(Order.id == order_id, Order.user_id == user_id))
+    return row.scalar_one_or_none()
+
+
+async def list_admin(
+    db: AsyncSession,
+    *,
+    status: str | None,
+    user_id: str | None,
+    limit: int,
+    cursor: str | None,
+) -> list[Order]:
+    stmt = select(Order)
+    if status:
+        stmt = stmt.where(Order.status == status)
+    if user_id:
+        stmt = stmt.where(Order.user_id == user_id)
+    if cursor:
+        cursor_placed_at, cursor_order_id = _decode_cursor(cursor)
+        stmt = stmt.where(
+            or_(
+                Order.placed_at < cursor_placed_at,
+                and_(Order.placed_at == cursor_placed_at, Order.id < cursor_order_id),
+            )
+        )
+    stmt = stmt.order_by(Order.placed_at.desc(), Order.id.desc()).limit(limit)
+    return list((await db.execute(stmt)).scalars().all())
+
+
+async def list_payments_for_order(db: AsyncSession, order_id: str) -> list[Payment]:
+    rows = await db.execute(
+        select(Payment).where(Payment.order_id == order_id).order_by(Payment.created_at.desc())
+    )
+    return list(rows.scalars().all())
+
+
+async def list_status_history(db: AsyncSession, order_id: str) -> list[OrderStatusHistory]:
+    rows = await db.execute(
+        select(OrderStatusHistory)
+        .where(OrderStatusHistory.order_id == order_id)
+        .order_by(OrderStatusHistory.changed_at.asc())
+    )
+    return list(rows.scalars().all())
+
+
+def encode_cursor(order: Order) -> str:
+    raw = f"{order.placed_at.isoformat()}|{order.id}"
+    return base64.urlsafe_b64encode(raw.encode()).decode().rstrip("=")
+
+
+def _decode_cursor(cursor: str) -> tuple[datetime, str]:
+    padding = "=" * (-len(cursor) % 4)
+    try:
+        raw = base64.urlsafe_b64decode(cursor + padding).decode()
+        placed_at_iso, order_id = raw.split("|", 1)
+        placed_at = datetime.fromisoformat(placed_at_iso)
+    except (ValueError, UnicodeDecodeError) as exc:
+        raise ValidationError("cursor inválido", details={"field": "cursor"}) from exc
+    return placed_at, order_id
 
 
 async def record_coupon_redemption(

@@ -11,6 +11,7 @@ from app.api.v1.admin import (
     coupons,
     customization,
     discounts,
+    orders,
     product_images,
     products,
     uploads,
@@ -24,3 +25,4 @@ admin_router.include_router(product_images.router)
 admin_router.include_router(discounts.router)
 admin_router.include_router(uploads.router)
 admin_router.include_router(coupons.router)
+admin_router.include_router(orders.router)
