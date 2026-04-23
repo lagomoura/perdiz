@@ -13,6 +13,7 @@ from app.exceptions import ValidationError
 from app.models.media_file import MediaFile
 from app.models.user import User
 from app.services import audit
+from app.services.media import queue as media_queue
 from app.services.media import r2_client, validators
 from app.utils.ulid import new_ulid
 
@@ -154,4 +155,11 @@ async def commit(
         after=audit.snapshot(media),
     )
     await db.commit()
+
+    # After a successful STL commit, enqueue the conversion job so the
+    # frontend eventually has a lightweight GLB to render. Failures are
+    # logged inside the helper and do not affect the admin response.
+    if validated.kind == "model_stl":
+        await media_queue.enqueue_stl_conversion(media.id)
+
     return media

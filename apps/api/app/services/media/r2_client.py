@@ -99,6 +99,34 @@ async def get_range(storage_key: str, *, start: int, end: int) -> bytes:
     return await asyncio.to_thread(_get)
 
 
+async def get_object(storage_key: str) -> bytes:
+    """Download the full object body."""
+
+    def _get() -> bytes:
+        client = _s3_client()
+        response = client.get_object(Bucket=settings.r2_bucket, Key=storage_key)
+        body = response["Body"].read()
+        assert isinstance(body, bytes)
+        return body
+
+    return await asyncio.to_thread(_get)
+
+
+async def put_object(storage_key: str, data: bytes, *, content_type: str) -> None:
+    """Upload ``data`` to R2 with the given content-type. Overwrites if present."""
+
+    def _put() -> None:
+        client = _s3_client()
+        client.put_object(
+            Bucket=settings.r2_bucket,
+            Key=storage_key,
+            Body=data,
+            ContentType=content_type,
+        )
+
+    await asyncio.to_thread(_put)
+
+
 async def delete_object(storage_key: str) -> None:
     def _delete() -> None:
         client = _s3_client()
