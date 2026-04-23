@@ -9,7 +9,10 @@ from __future__ import annotations
 
 from app.models.audit_log import AuditLog
 from app.models.automatic_discount import AutomaticDiscount
+from app.models.cart import Cart
+from app.models.cart_item import CartItem
 from app.models.category import Category
+from app.models.coupon import Coupon
 from app.models.customization_group import CustomizationGroup
 from app.models.customization_option import CustomizationOption
 from app.models.email_verification_token import EmailVerificationToken
@@ -23,7 +26,10 @@ from app.models.volume_discount import VolumeDiscount
 __all__ = [
     "AuditLog",
     "AutomaticDiscount",
+    "Cart",
+    "CartItem",
     "Category",
+    "Coupon",
     "CustomizationGroup",
     "CustomizationOption",
     "EmailVerificationToken",
