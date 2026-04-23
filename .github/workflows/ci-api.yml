@@ -31,6 +31,16 @@ jobs:
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 5s --health-timeout 5s --health-retries 10
+      minio:
+        image: bitnami/minio:latest
+        env:
+          MINIO_ROOT_USER: minioadmin
+          MINIO_ROOT_PASSWORD: minioadmin
+          MINIO_DEFAULT_BUCKETS: perdiz-media
+        ports: ['9000:9000']
+        options: >-
+          --health-cmd "curl -f http://localhost:9000/minio/health/live"
+          --health-interval 5s --health-timeout 5s --health-retries 20
 
     defaults:
       run:
@@ -42,6 +52,12 @@ jobs:
       REDIS_URL: redis://localhost:6379/0
       JWT_SECRET: ci-secret-not-used-for-real
       ALLOWED_ORIGINS: http://localhost:5173
+      R2_ENDPOINT_URL: http://localhost:9000
+      R2_ACCESS_KEY_ID: minioadmin
+      R2_SECRET_ACCESS_KEY: minioadmin
+      R2_BUCKET: perdiz-media
+      R2_REGION: auto
+      R2_PUBLIC_BASE_URL: http://localhost:9000/perdiz-media
 
     steps:
       - uses: actions/checkout@v4
