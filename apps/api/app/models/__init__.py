@@ -7,6 +7,7 @@ definition time); imports are kept alphabetical for readability.
 
 from __future__ import annotations
 
+from app.models.audit_log import AuditLog
 from app.models.automatic_discount import AutomaticDiscount
 from app.models.category import Category
 from app.models.customization_group import CustomizationGroup
@@ -20,6 +21,7 @@ from app.models.user import User
 from app.models.volume_discount import VolumeDiscount
 
 __all__ = [
+    "AuditLog",
     "AutomaticDiscount",
     "Category",
     "CustomizationGroup",
