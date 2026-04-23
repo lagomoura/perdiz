@@ -14,16 +14,22 @@ from __future__ import annotations
 
 import asyncio
 import io
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import structlog
-from sqlalchemy import select
+from sqlalchemy import exists, select
+from sqlalchemy.orm import aliased
 
 from app.db.session import AsyncSessionLocal
 from app.models.media_file import MediaFile
+from app.models.product import Product
+from app.models.product_image import ProductImage
 from app.services.media import r2_client
 
 log = structlog.get_logger(__name__)
+
+CLEANUP_AGE_HOURS: int = 24
 
 
 def _stl_to_glb_bytes(stl_bytes: bytes) -> bytes:
@@ -115,3 +121,51 @@ async def convert_stl_to_glb(_ctx: dict[str, Any], stl_media_file_id: str) -> No
             stl_size=stl.size_bytes,
             glb_size=len(glb_bytes),
         )
+
+
+async def cleanup_abandoned_uploads(_ctx: dict[str, Any]) -> int:
+    """Delete MediaFile rows older than 24 h that no other table references.
+
+    "Referenced" currently means any of:
+    - ``product.model_file_id``
+    - ``product_image.media_file_id``
+    - ``media_file.derived_from_id`` (so an STL whose GLB exists is kept)
+
+    When cart/order schemas land in a future PR, their ``file_id``
+    references should be added to the NOT EXISTS set here.
+
+    Returns the number of rows deleted. Idempotent — safe to re-run.
+    """
+    threshold = datetime.now(tz=UTC) - timedelta(hours=CLEANUP_AGE_HOURS)
+    deleted = 0
+    async with AsyncSessionLocal() as db:
+        derived_alias = aliased(MediaFile)
+        stmt = select(MediaFile).where(
+            MediaFile.created_at < threshold,
+            MediaFile.deleted_at.is_(None),
+            ~exists().where(Product.model_file_id == MediaFile.id),
+            ~exists().where(ProductImage.media_file_id == MediaFile.id),
+            ~exists().where(derived_alias.derived_from_id == MediaFile.id),
+        )
+        rows = (await db.execute(stmt)).scalars().all()
+
+        for media in rows:
+            try:
+                await r2_client.delete_object(media.storage_key)
+            except Exception as exc:
+                log.warning(
+                    "cleanup_uploads.r2_delete_failed",
+                    media_id=media.id,
+                    storage_key=media.storage_key,
+                    error=str(exc),
+                )
+                # Continue with the DB delete either way. An orphan R2
+                # object is a smaller problem than an orphan DB row
+                # pointing at a missing object.
+            await db.delete(media)
+            deleted += 1
+
+        await db.commit()
+
+    log.info("cleanup_uploads.done", deleted=deleted)
+    return deleted

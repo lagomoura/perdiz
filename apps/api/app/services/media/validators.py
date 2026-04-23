@@ -35,7 +35,13 @@ MAX_STL_BYTES: int = 100 * 1024 * 1024  # 100 MB
 
 @dataclass(frozen=True)
 class ValidatedUpload:
-    kind: str
+    """Result of server-side post-upload validation.
+
+    ``kind`` is NOT carried here — the caller knows which ``kind`` it
+    asked to validate (admin ``image`` vs user ``user_upload_image``)
+    and sets it when building the MediaFile.
+    """
+
     mime_type: str
     size_bytes: int
     metadata: dict[str, object]
@@ -71,7 +77,7 @@ def validate_image(
             "El contenido del archivo no coincide con el mime_type.",
             details={"field": "content"},
         )
-    return ValidatedUpload(kind="image", mime_type=mime_type, size_bytes=actual_size, metadata={})
+    return ValidatedUpload(mime_type=mime_type, size_bytes=actual_size, metadata={})
 
 
 def validate_stl(
@@ -113,6 +119,4 @@ def validate_stl(
     metadata: dict[str, object] = {"format": "ascii" if is_ascii else "binary"}
     if triangles is not None:
         metadata["triangles"] = triangles
-    return ValidatedUpload(
-        kind="model_stl", mime_type=mime_type, size_bytes=actual_size, metadata=metadata
-    )
+    return ValidatedUpload(mime_type=mime_type, size_bytes=actual_size, metadata=metadata)

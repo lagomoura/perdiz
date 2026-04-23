@@ -1,4 +1,16 @@
-"""Admin upload orchestration: presign + commit."""
+"""Upload orchestration: presign + commit, shared by admin and user flows.
+
+``presign`` and ``commit`` accept an ``allowed_kinds`` set so each caller
+gates what it considers legal. The admin endpoints pass ``ADMIN_KINDS``
+(raw images and STLs that become catalog assets). The user endpoints
+pass ``USER_KINDS`` (uploads attached to customization selections).
+
+Kind → content-class mapping:
+    image              ↦ image (jpeg/png/webp)
+    user_upload_image  ↦ image
+    model_stl          ↦ stl
+    user_upload_model  ↦ stl
+"""
 
 from __future__ import annotations
 
@@ -21,6 +33,35 @@ from app.utils.ulid import new_ulid
 _UNSAFE_FILENAME_CHARS = re.compile(r"[^A-Za-z0-9._-]+")
 
 ADMIN_KINDS: frozenset[str] = frozenset({"image", "model_stl"})
+USER_KINDS: frozenset[str] = frozenset({"user_upload_image", "user_upload_model"})
+ALL_KINDS: frozenset[str] = ADMIN_KINDS | USER_KINDS
+
+_KIND_PREFIX: dict[str, str] = {
+    "image": "images",
+    "model_stl": "models/stl",
+    "user_upload_image": "uploads/images",
+    "user_upload_model": "uploads/models",
+}
+
+
+def _content_class(kind: str) -> Literal["image", "stl"]:
+    if kind in ("image", "user_upload_image"):
+        return "image"
+    return "stl"
+
+
+def _max_size_for_kind(kind: str) -> int:
+    return (
+        validators.MAX_IMAGE_BYTES if _content_class(kind) == "image" else validators.MAX_STL_BYTES
+    )
+
+
+def _allowed_mime_types(kind: str) -> frozenset[str]:
+    return (
+        validators.ALLOWED_IMAGE_MIME_TYPES
+        if _content_class(kind) == "image"
+        else validators.ALLOWED_STL_MIME_TYPES
+    )
 
 
 @dataclass(frozen=True)
@@ -33,25 +74,9 @@ class PresignedUpload:
 
 
 def _sanitize_filename(name: str) -> str:
-    # Strip path components that some browsers send.
     tail = name.rsplit("/", 1)[-1].rsplit("\\", 1)[-1]
     cleaned = _UNSAFE_FILENAME_CHARS.sub("-", tail).strip("-") or "file"
-    # Truncate to keep the key manageable.
     return cleaned[:120]
-
-
-def _kind_prefix(kind: str) -> str:
-    return {
-        "image": "images",
-        "model_stl": "models/stl",
-    }[kind]
-
-
-def _max_size_for_kind(kind: str) -> int:
-    return {
-        "image": validators.MAX_IMAGE_BYTES,
-        "model_stl": validators.MAX_STL_BYTES,
-    }[kind]
 
 
 async def presign(
@@ -60,8 +85,9 @@ async def presign(
     mime_type: str,
     size_bytes: int,
     filename: str,
+    allowed_kinds: frozenset[str],
 ) -> PresignedUpload:
-    if kind not in ADMIN_KINDS:
+    if kind not in allowed_kinds:
         raise ValidationError("Tipo de upload no soportado.", details={"field": "kind"})
     limit = _max_size_for_kind(kind)
     if size_bytes <= 0 or size_bytes > limit:
@@ -69,13 +95,14 @@ async def presign(
             f"El archivo supera el tamaño máximo permitido para {kind}.",
             details={"field": "size_bytes"},
         )
-    if kind == "image" and mime_type not in validators.ALLOWED_IMAGE_MIME_TYPES:
-        raise ValidationError("Tipo de imagen no permitido.", details={"field": "mime_type"})
-    if kind == "model_stl" and mime_type not in validators.ALLOWED_STL_MIME_TYPES:
-        raise ValidationError("Tipo de archivo STL no permitido.", details={"field": "mime_type"})
+    if mime_type not in _allowed_mime_types(kind):
+        field_label = "imagen" if _content_class(kind) == "image" else "STL"
+        raise ValidationError(
+            f"Tipo de {field_label} no permitido.", details={"field": "mime_type"}
+        )
 
     safe_name = _sanitize_filename(filename)
-    storage_key = f"{_kind_prefix(kind)}/{new_ulid()}/{safe_name}"
+    storage_key = f"{_KIND_PREFIX[kind]}/{new_ulid()}/{safe_name}"
     expires_in = 600  # 10 minutes
     url = await r2_client.generate_presigned_put_url(
         storage_key=storage_key,
@@ -100,8 +127,9 @@ async def commit(
     kind: str,
     declared_mime_type: str,
     declared_size_bytes: int,
+    allowed_kinds: frozenset[str],
 ) -> MediaFile:
-    if kind not in ADMIN_KINDS:
+    if kind not in allowed_kinds:
         raise ValidationError("Tipo de upload no soportado.", details={"field": "kind"})
 
     head = await r2_client.head_object(storage_key)
@@ -112,12 +140,10 @@ async def commit(
         )
 
     actual_size = int(head["content_length"])
-    # Grab the first KB to inspect magic bytes / STL header. Cheap regardless
-    # of the object's total size.
     read_upto = min(actual_size - 1, 4095)
     head_bytes = await r2_client.get_range(storage_key, start=0, end=read_upto)
 
-    if kind == "image":
+    if _content_class(kind) == "image":
         validated = validators.validate_image(
             mime_type=declared_mime_type,
             declared_size=declared_size_bytes,
@@ -134,7 +160,7 @@ async def commit(
 
     media = MediaFile(
         owner_user_id=actor.id,
-        kind=validated.kind,
+        kind=kind,
         mime_type=validated.mime_type,
         size_bytes=validated.size_bytes,
         storage_key=storage_key,
@@ -156,10 +182,10 @@ async def commit(
     )
     await db.commit()
 
-    # After a successful STL commit, enqueue the conversion job so the
-    # frontend eventually has a lightweight GLB to render. Failures are
-    # logged inside the helper and do not affect the admin response.
-    if validated.kind == "model_stl":
+    # Admin STL uploads auto-enqueue the STL→GLB conversion. User STL
+    # uploads don't because they are tied to a specific user action
+    # (customization), not catalog content.
+    if kind == "model_stl":
         await media_queue.enqueue_stl_conversion(media.id)
 
     return media
