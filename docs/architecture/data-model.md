@@ -102,7 +102,7 @@ dimensions_mm     INT[] NULL               -- [x, y, z]
 sku               TEXT UNIQUE NOT NULL
 tags              TEXT[] DEFAULT '{}'
 status            product_status NOT NULL DEFAULT 'draft'  -- 'draft','active','archived'
-search_tsv        TSVECTOR                 -- trigger-maintained para full-text español
+search_tsv        TSVECTOR                 -- GENERATED ALWAYS AS STORED, spanish dict, weights name>description. Tags quedan fuera del tsvector (polimorfismo array_to_string no es immutable en Postgres para columnas generadas STORED) — se indexan aparte con GIN y se buscan vía `tags @> ARRAY[...]`.
 model_file_id     CHAR(26) NULL FK media_files.id ON DELETE SET NULL
 created_at        TIMESTAMPTZ DEFAULT now()
 updated_at        TIMESTAMPTZ DEFAULT now()
@@ -284,7 +284,7 @@ UNIQUE (provider, provider_payment_id)
 ```
 id                        CHAR(26) PK
 code                      TEXT UNIQUE NOT NULL        -- CI comparado insensible (lowercase en DB)
-type                      coupon_type NOT NULL        -- 'percentage','fixed'
+type                      discount_type NOT NULL      -- 'percentage','fixed' (enum compartido con volume_discounts + automatic_discounts)
 value                     INT NOT NULL                -- si percentage: 1..100; si fixed: centavos
 min_order_cents           INT NOT NULL DEFAULT 0
 valid_from                TIMESTAMPTZ NULL
@@ -314,7 +314,7 @@ redeemed_at TIMESTAMPTZ DEFAULT now()
 ```
 id              CHAR(26) PK
 name            TEXT NOT NULL
-type            coupon_type NOT NULL       -- reutiliza enum
+type            discount_type NOT NULL     -- enum compartido (ver coupons)
 value           INT NOT NULL
 scope           discount_scope NOT NULL    -- 'category','product'
 target_id       CHAR(26) NOT NULL          -- category_id o product_id
@@ -331,8 +331,8 @@ updated_at      TIMESTAMPTZ DEFAULT now()
 id              CHAR(26) PK
 product_id      CHAR(26) FK products.id ON DELETE CASCADE
 min_quantity    INT NOT NULL CHECK (min_quantity >= 2)
-type            coupon_type NOT NULL
-value           INT NOT NULL
+type            discount_type NOT NULL      -- enum compartido (ver coupons)
+value           INT NOT NULL CHECK (value > 0)
 created_at      TIMESTAMPTZ DEFAULT now()
 ```
 
