@@ -12,11 +12,19 @@ class _Strict(BaseModel):
     model_config = ConfigDict(extra="forbid", populate_by_name=True)
 
 
-Kind = Literal["image", "model_stl"]
+AdminKind = Literal["image", "model_stl"]
+UserKind = Literal["user_upload_image", "user_upload_model"]
 
 
 class PresignIn(_Strict):
-    kind: Kind
+    kind: AdminKind
+    mime_type: str = Field(min_length=3, max_length=120)
+    size_bytes: int = Field(gt=0, le=200 * 1024 * 1024)
+    filename: str = Field(min_length=1, max_length=200)
+
+
+class UserPresignIn(_Strict):
+    kind: UserKind
     mime_type: str = Field(min_length=3, max_length=120)
     size_bytes: int = Field(gt=0, le=200 * 1024 * 1024)
     filename: str = Field(min_length=1, max_length=200)
@@ -32,7 +40,14 @@ class PresignOut(_Strict):
 
 class CommitIn(_Strict):
     storage_key: str = Field(min_length=1, max_length=500)
-    kind: Kind
+    kind: AdminKind
+    mime_type: str = Field(min_length=3, max_length=120)
+    size_bytes: int = Field(gt=0, le=200 * 1024 * 1024)
+
+
+class UserCommitIn(_Strict):
+    storage_key: str = Field(min_length=1, max_length=500)
+    kind: UserKind
     mime_type: str = Field(min_length=3, max_length=120)
     size_bytes: int = Field(gt=0, le=200 * 1024 * 1024)
 
