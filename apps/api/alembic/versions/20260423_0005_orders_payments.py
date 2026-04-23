@@ -33,15 +33,13 @@ def upgrade() -> None:
         "refunded",
         name="order_status",
     ).create(bind, checkfirst=True)
-    postgresql.ENUM("pickup", "standard", name="shipping_method").create(
+    postgresql.ENUM("pickup", "standard", name="shipping_method").create(bind, checkfirst=True)
+    postgresql.ENUM("mercadopago", "stripe", "paypal", name="payment_provider").create(
         bind, checkfirst=True
     )
-    postgresql.ENUM(
-        "mercadopago", "stripe", "paypal", name="payment_provider"
-    ).create(bind, checkfirst=True)
-    postgresql.ENUM(
-        "pending", "approved", "rejected", "refunded", name="payment_status"
-    ).create(bind, checkfirst=True)
+    postgresql.ENUM("pending", "approved", "rejected", "refunded", name="payment_status").create(
+        bind, checkfirst=True
+    )
 
     op.create_table(
         "orders",
@@ -70,16 +68,10 @@ def upgrade() -> None:
             server_default="pending_payment",
         ),
         sa.Column("subtotal_cents", sa.Integer(), nullable=False),
-        sa.Column(
-            "discount_cents", sa.Integer(), nullable=False, server_default="0"
-        ),
-        sa.Column(
-            "shipping_cents", sa.Integer(), nullable=False, server_default="0"
-        ),
+        sa.Column("discount_cents", sa.Integer(), nullable=False, server_default="0"),
+        sa.Column("shipping_cents", sa.Integer(), nullable=False, server_default="0"),
         sa.Column("total_cents", sa.Integer(), nullable=False),
-        sa.Column(
-            "currency", sa.String(length=3), nullable=False, server_default="ARS"
-        ),
+        sa.Column("currency", sa.String(length=3), nullable=False, server_default="ARS"),
         sa.Column(
             "coupon_id",
             sa.String(length=26),
@@ -89,9 +81,7 @@ def upgrade() -> None:
         sa.Column("shipping_address_json", postgresql.JSONB(), nullable=False),
         sa.Column(
             "shipping_method",
-            postgresql.ENUM(
-                "pickup", "standard", name="shipping_method", create_type=False
-            ),
+            postgresql.ENUM("pickup", "standard", name="shipping_method", create_type=False),
             nullable=False,
         ),
         sa.Column("admin_notes", sa.Text(), nullable=True),
@@ -159,9 +149,7 @@ def upgrade() -> None:
             server_default=sa.text("'{}'::jsonb"),
         ),
         sa.CheckConstraint("quantity > 0", name="ck_order_items_quantity_positive"),
-        sa.CheckConstraint(
-            "unit_price_cents >= 0", name="ck_order_items_unit_price_non_negative"
-        ),
+        sa.CheckConstraint("unit_price_cents >= 0", name="ck_order_items_unit_price_non_negative"),
         sa.CheckConstraint(
             "line_total_cents >= 0",
             name="ck_order_items_line_total_non_negative",
@@ -224,9 +212,7 @@ def upgrade() -> None:
             nullable=False,
         ),
     )
-    op.create_index(
-        "ix_order_status_history_order_id", "order_status_history", ["order_id"]
-    )
+    op.create_index("ix_order_status_history_order_id", "order_status_history", ["order_id"])
 
     op.create_table(
         "payments",
@@ -263,9 +249,7 @@ def upgrade() -> None:
             server_default="pending",
         ),
         sa.Column("amount_cents", sa.Integer(), nullable=False),
-        sa.Column(
-            "currency", sa.String(length=3), nullable=False, server_default="ARS"
-        ),
+        sa.Column("currency", sa.String(length=3), nullable=False, server_default="ARS"),
         sa.Column(
             "raw_webhook_events",
             postgresql.JSONB(),
@@ -284,9 +268,7 @@ def upgrade() -> None:
             server_default=sa.func.now(),
             nullable=False,
         ),
-        sa.UniqueConstraint(
-            "provider", "provider_payment_id", name="uq_payments_provider_ref"
-        ),
+        sa.UniqueConstraint("provider", "provider_payment_id", name="uq_payments_provider_ref"),
     )
     op.create_index("ix_payments_order_id", "payments", ["order_id"])
 
@@ -318,15 +300,9 @@ def upgrade() -> None:
             nullable=False,
         ),
     )
-    op.create_index(
-        "ix_coupon_redemptions_coupon_id", "coupon_redemptions", ["coupon_id"]
-    )
-    op.create_index(
-        "ix_coupon_redemptions_order_id", "coupon_redemptions", ["order_id"]
-    )
-    op.create_index(
-        "ix_coupon_redemptions_user_id", "coupon_redemptions", ["user_id"]
-    )
+    op.create_index("ix_coupon_redemptions_coupon_id", "coupon_redemptions", ["coupon_id"])
+    op.create_index("ix_coupon_redemptions_order_id", "coupon_redemptions", ["order_id"])
+    op.create_index("ix_coupon_redemptions_user_id", "coupon_redemptions", ["user_id"])
 
 
 def downgrade() -> None:
