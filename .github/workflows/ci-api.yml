@@ -31,16 +31,10 @@ jobs:
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 5s --health-timeout 5s --health-retries 10
-      minio:
-        image: bitnami/minio:latest
-        env:
-          MINIO_ROOT_USER: minioadmin
-          MINIO_ROOT_PASSWORD: minioadmin
-          MINIO_DEFAULT_BUCKETS: perdiz-media
-        ports: ['9000:9000']
-        options: >-
-          --health-cmd "curl -f http://localhost:9000/minio/health/live"
-          --health-interval 5s --health-timeout 5s --health-retries 20
+
+    # MinIO is started in a dedicated step (not as a service container)
+    # because GHA services can't pass a command, and minio/minio's
+    # entrypoint needs ``server /data`` to actually start.
 
     defaults:
       run:
@@ -61,6 +55,25 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Start MinIO
+        run: |
+          docker run -d --name minio \
+            -p 9000:9000 \
+            -e MINIO_ROOT_USER=minioadmin \
+            -e MINIO_ROOT_PASSWORD=minioadmin \
+            minio/minio:latest server /data
+          # Wait until the health endpoint responds.
+          for i in {1..30}; do
+            if curl -fsS http://localhost:9000/minio/health/live; then
+              echo "MinIO ready"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "MinIO failed to become ready"
+          docker logs minio
+          exit 1
 
       - name: Install uv
         run: curl -LsSf https://astral.sh/uv/install.sh | sh
