@@ -13,10 +13,15 @@ from app.models.cart import Cart
 from app.models.cart_item import CartItem
 from app.models.category import Category
 from app.models.coupon import Coupon
+from app.models.coupon_redemption import CouponRedemption
 from app.models.customization_group import CustomizationGroup
 from app.models.customization_option import CustomizationOption
 from app.models.email_verification_token import EmailVerificationToken
 from app.models.media_file import MediaFile
+from app.models.order import Order
+from app.models.order_item import OrderItem
+from app.models.order_status_history import OrderStatusHistory
+from app.models.payment import Payment
 from app.models.product import Product
 from app.models.product_image import ProductImage
 from app.models.refresh_token import RefreshToken
@@ -30,10 +35,15 @@ __all__ = [
     "CartItem",
     "Category",
     "Coupon",
+    "CouponRedemption",
     "CustomizationGroup",
     "CustomizationOption",
     "EmailVerificationToken",
     "MediaFile",
+    "Order",
+    "OrderItem",
+    "OrderStatusHistory",
+    "Payment",
     "Product",
     "ProductImage",
     "RefreshToken",

@@ -4,7 +4,17 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 
-from app.api.v1 import auth, cart, categories, health, products, uploads, users
+from app.api.v1 import (
+    auth,
+    cart,
+    categories,
+    checkout,
+    health,
+    products,
+    uploads,
+    users,
+    webhooks,
+)
 from app.api.v1.admin import admin_router
 
 api_router = APIRouter()
@@ -15,4 +25,6 @@ api_router.include_router(categories.router)
 api_router.include_router(products.router)
 api_router.include_router(uploads.router)
 api_router.include_router(cart.router)
+api_router.include_router(checkout.router)
+api_router.include_router(webhooks.router)
 api_router.include_router(admin_router)
