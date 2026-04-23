@@ -22,18 +22,25 @@ _SCRUB_KEYS = {"password", "password_hash", "token", "token_hash", "secret"}
 def snapshot(entity: Any) -> dict[str, Any] | None:
     """Return a JSON-safe dict of a SQLAlchemy model's column values.
 
+    Iterates ``mapper.column_attrs`` (ORM-level column properties) so the
+    attribute name is always the Python name, not the DB column name. This
+    matters for columns renamed with ``mapped_column("db_name", ...)`` where
+    ``Column.key`` could otherwise return the DB name and clash with
+    built-ins like ``Base.metadata``.
+
     Sensitive keys are masked. Returns None if ``entity`` is None.
     """
     if entity is None:
         return None
     mapper = inspect(entity).mapper
     out: dict[str, Any] = {}
-    for column in mapper.columns:
-        value = getattr(entity, column.key)
-        if column.key in _SCRUB_KEYS:
-            out[column.key] = "***" if value is not None else None
+    for prop in mapper.column_attrs:
+        key = prop.key
+        value = getattr(entity, key)
+        if key in _SCRUB_KEYS:
+            out[key] = "***" if value is not None else None
         else:
-            out[column.key] = _jsonify(value)
+            out[key] = _jsonify(value)
     return out
 
 
