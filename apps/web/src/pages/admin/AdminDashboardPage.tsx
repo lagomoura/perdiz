@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 
 import { useCategories } from '@/features/admin/categories';
+import { useProducts } from '@/features/admin/products';
 
 export function AdminDashboardPage() {
-  const { data: categories, isLoading } = useCategories();
+  const { data: categories, isLoading: loadingCats } = useCategories();
+  const { data: products, isLoading: loadingProds } = useProducts({});
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -20,7 +22,7 @@ export function AdminDashboardPage() {
             Categorías
           </p>
           <p className="mt-2 text-3xl font-bold text-brand-graphite-900">
-            {isLoading ? '…' : (categories?.length ?? 0)}
+            {loadingCats ? '…' : (categories?.length ?? 0)}
           </p>
           <p className="mt-2 text-sm text-neutral-600">
             Gestionar categorías y sub-categorías.
@@ -34,8 +36,12 @@ export function AdminDashboardPage() {
           <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
             Productos
           </p>
-          <p className="mt-2 text-3xl font-bold text-brand-graphite-900">—</p>
-          <p className="mt-2 text-sm text-neutral-600">Próximamente.</p>
+          <p className="mt-2 text-3xl font-bold text-brand-graphite-900">
+            {loadingProds ? '…' : (products?.count ?? 0)}
+          </p>
+          <p className="mt-2 text-sm text-neutral-600">
+            Crear y gestionar el catálogo.
+          </p>
         </Link>
       </div>
     </div>

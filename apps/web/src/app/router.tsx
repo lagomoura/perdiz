@@ -21,6 +21,12 @@ const CategoriesListPage = lazy(() =>
 const CategoryEditPage = lazy(() =>
   import('@/pages/admin/CategoryEditPage').then((m) => ({ default: m.CategoryEditPage })),
 );
+const ProductsListPage = lazy(() =>
+  import('@/pages/admin/ProductsListPage').then((m) => ({ default: m.ProductsListPage })),
+);
+const ProductEditPage = lazy(() =>
+  import('@/pages/admin/ProductEditPage').then((m) => ({ default: m.ProductEditPage })),
+);
 
 export const router = createBrowserRouter([
   {
@@ -125,9 +131,25 @@ export const router = createBrowserRouter([
       {
         path: 'productos',
         element: (
-          <div className="mx-auto max-w-4xl text-center text-neutral-600">
-            Productos — próximamente.
-          </div>
+          <Suspense fallback={<Spinner />}>
+            <ProductsListPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'productos/nuevo',
+        element: (
+          <Suspense fallback={<Spinner />}>
+            <ProductEditPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'productos/:id',
+        element: (
+          <Suspense fallback={<Spinner />}>
+            <ProductEditPage />
+          </Suspense>
         ),
       },
     ],
