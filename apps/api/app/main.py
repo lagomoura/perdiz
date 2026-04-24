@@ -19,6 +19,7 @@ from app.api.v1 import api_router
 from app.config import settings
 from app.logging import configure_logging
 from app.observability import init_observability
+from app.services.auth.bootstrap import ensure_admin
 
 configure_logging()
 init_observability()
@@ -28,6 +29,7 @@ log = structlog.get_logger(__name__)
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     log.info("app.startup", env=settings.app_env)
+    await ensure_admin()
     yield
     log.info("app.shutdown")
 
