@@ -74,6 +74,44 @@ async def test_ensure_admin_noop_when_already_admin(_bootstrap_env: None) -> Non
     assert passwords.verify_password("AdminPass123", user.password_hash)
 
 
+async def test_ensure_admin_handles_concurrent_insert(
+    _bootstrap_env: None,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # Simulate the race: our lookup says "no user", so we attempt INSERT, but
+    # between lookup and commit another worker already inserted. We verify the
+    # fallback catches the IntegrityError and re-reads the row.
+    async with AsyncSessionLocal() as session:
+        winner = await users_repo.create(
+            session,
+            email="owner@example.com",
+            password_hash=passwords.hash_password("WinnerPass9"),
+            first_name=None,
+            last_name=None,
+        )
+        winner.role = "admin"
+        await session.commit()
+
+    real_get_by_email = users_repo.get_by_email
+    calls = {"n": 0}
+
+    async def fake_get_by_email(db, email):  # type: ignore[no-untyped-def]
+        calls["n"] += 1
+        if calls["n"] == 1:
+            return None  # pretend it's missing → triggers create path
+        return await real_get_by_email(db, email)
+
+    monkeypatch.setattr(users_repo, "get_by_email", fake_get_by_email)
+
+    await ensure_admin()  # must not raise
+
+    async with AsyncSessionLocal() as session:
+        user = await real_get_by_email(session, "owner@example.com")
+    assert user is not None
+    assert user.role == "admin"
+    assert passwords.verify_password("WinnerPass9", user.password_hash)
+
+
 async def test_ensure_admin_skips_when_not_configured(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

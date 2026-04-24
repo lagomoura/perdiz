@@ -15,6 +15,7 @@ from __future__ import annotations
 from datetime import UTC, datetime
 
 import structlog
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
@@ -63,5 +64,14 @@ async def _ensure(session: AsyncSession, *, email: str, password: str) -> None:
         email_verified_at=datetime.now(UTC),
     )
     session.add(user)
-    await session.commit()
+    try:
+        await session.commit()
+    except IntegrityError:
+        # Another worker (uvicorn spawns multiple lifespans) inserted first.
+        await session.rollback()
+        existing = await users_repo.get_by_email(session, email)
+        if existing is None:
+            raise
+        log.info("bootstrap_admin.already_admin", email=email, race=True)
+        return
     log.info("bootstrap_admin.created", email=email)
