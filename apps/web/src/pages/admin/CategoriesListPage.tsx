@@ -46,9 +46,16 @@ export function CategoriesListPage() {
         <h1 className="font-display text-2xl font-bold text-brand-graphite-900">
           Categorías
         </h1>
-        <Link to="/admin/categorias/nueva">
-          <Button size="md">+ Nueva categoría</Button>
-        </Link>
+        <div className="flex gap-2">
+          <Link to="/admin/categorias/importar">
+            <Button size="md" variant="ghost">
+              Importar CSV
+            </Button>
+          </Link>
+          <Link to="/admin/categorias/nueva">
+            <Button size="md">+ Nueva categoría</Button>
+          </Link>
+        </div>
       </div>
 
       <div className="mb-4 flex items-center gap-2 text-sm">

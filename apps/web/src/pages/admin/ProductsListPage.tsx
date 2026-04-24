@@ -65,9 +65,16 @@ export function ProductsListPage() {
         <h1 className="font-display text-2xl font-bold text-brand-graphite-900">
           Productos
         </h1>
-        <Link to="/admin/productos/nuevo">
-          <Button size="md">+ Nuevo producto</Button>
-        </Link>
+        <div className="flex gap-2">
+          <Link to="/admin/productos/importar">
+            <Button size="md" variant="ghost">
+              Importar CSV
+            </Button>
+          </Link>
+          <Link to="/admin/productos/nuevo">
+            <Button size="md">+ Nuevo producto</Button>
+          </Link>
+        </div>
       </div>
 
       <div className="mb-4 flex flex-wrap items-center gap-3 text-sm">

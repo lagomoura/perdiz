@@ -33,6 +33,12 @@ const CatalogPage = lazy(() =>
 const ProductDetailPage = lazy(() =>
   import('@/pages/catalog/ProductDetailPage').then((m) => ({ default: m.ProductDetailPage })),
 );
+const CategoriesImportPage = lazy(() =>
+  import('@/pages/admin/CategoriesImportPage').then((m) => ({ default: m.CategoriesImportPage })),
+);
+const ProductsImportPage = lazy(() =>
+  import('@/pages/admin/ProductsImportPage').then((m) => ({ default: m.ProductsImportPage })),
+);
 
 export const router = createBrowserRouter([
   {
@@ -135,6 +141,14 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: 'categorias/importar',
+        element: (
+          <Suspense fallback={<Spinner />}>
+            <CategoriesImportPage />
+          </Suspense>
+        ),
+      },
+      {
         path: 'categorias/:id',
         element: (
           <Suspense fallback={<Spinner />}>
@@ -155,6 +169,14 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<Spinner />}>
             <ProductEditPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'productos/importar',
+        element: (
+          <Suspense fallback={<Spinner />}>
+            <ProductsImportPage />
           </Suspense>
         ),
       },
