@@ -27,6 +27,12 @@ const ProductsListPage = lazy(() =>
 const ProductEditPage = lazy(() =>
   import('@/pages/admin/ProductEditPage').then((m) => ({ default: m.ProductEditPage })),
 );
+const CatalogPage = lazy(() =>
+  import('@/pages/catalog/CatalogPage').then((m) => ({ default: m.CatalogPage })),
+);
+const ProductDetailPage = lazy(() =>
+  import('@/pages/catalog/ProductDetailPage').then((m) => ({ default: m.ProductDetailPage })),
+);
 
 export const router = createBrowserRouter([
   {
@@ -43,9 +49,17 @@ export const router = createBrowserRouter([
       {
         path: 'catalogo',
         element: (
-          <div className="mx-auto max-w-4xl px-4 py-24 text-center text-neutral-600 md:px-6">
-            Catálogo en construcción.
-          </div>
+          <Suspense fallback={<Spinner />}>
+            <CatalogPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'producto/:slug',
+        element: (
+          <Suspense fallback={<Spinner />}>
+            <ProductDetailPage />
+          </Suspense>
         ),
       },
     ],
