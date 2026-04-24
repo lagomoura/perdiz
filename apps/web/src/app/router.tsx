@@ -2,15 +2,25 @@ import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { Spinner } from '@/components/feedback/Spinner';
-import { PublicLayout } from './layouts/PublicLayout';
-import { AuthLayout } from './layouts/AuthLayout';
 import { AccountLayout } from './layouts/AccountLayout';
+import { AdminLayout } from './layouts/AdminLayout';
+import { AuthLayout } from './layouts/AuthLayout';
+import { PublicLayout } from './layouts/PublicLayout';
 
 const HomePage = lazy(() => import('@/pages/home/HomePage').then((m) => ({ default: m.HomePage })));
 const LoginPage = lazy(() => import('@/pages/auth/LoginPage').then((m) => ({ default: m.LoginPage })));
 const RegisterPage = lazy(() => import('@/pages/auth/RegisterPage').then((m) => ({ default: m.RegisterPage })));
 const VerifyEmailPage = lazy(() => import('@/pages/auth/VerifyEmailPage').then((m) => ({ default: m.VerifyEmailPage })));
 const AccountPage = lazy(() => import('@/pages/account/AccountPage').then((m) => ({ default: m.AccountPage })));
+const AdminDashboardPage = lazy(() =>
+  import('@/pages/admin/AdminDashboardPage').then((m) => ({ default: m.AdminDashboardPage })),
+);
+const CategoriesListPage = lazy(() =>
+  import('@/pages/admin/CategoriesListPage').then((m) => ({ default: m.CategoriesListPage })),
+);
+const CategoryEditPage = lazy(() =>
+  import('@/pages/admin/CategoryEditPage').then((m) => ({ default: m.CategoryEditPage })),
+);
 
 export const router = createBrowserRouter([
   {
@@ -72,6 +82,52 @@ export const router = createBrowserRouter([
           <Suspense fallback={<Spinner />}>
             <AccountPage />
           </Suspense>
+        ),
+      },
+    ],
+  },
+  {
+    path: 'admin',
+    element: <AdminLayout />,
+    children: [
+      {
+        index: true,
+        element: (
+          <Suspense fallback={<Spinner />}>
+            <AdminDashboardPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'categorias',
+        element: (
+          <Suspense fallback={<Spinner />}>
+            <CategoriesListPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'categorias/nueva',
+        element: (
+          <Suspense fallback={<Spinner />}>
+            <CategoryEditPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'categorias/:id',
+        element: (
+          <Suspense fallback={<Spinner />}>
+            <CategoryEditPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'productos',
+        element: (
+          <div className="mx-auto max-w-4xl text-center text-neutral-600">
+            Productos — próximamente.
+          </div>
         ),
       },
     ],

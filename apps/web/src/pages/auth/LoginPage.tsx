@@ -17,12 +17,16 @@ export function LoginPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const from = searchParams.get('from') ?? '/mi-cuenta';
+  const fromParam = searchParams.get('from');
   const user = useAuthStore((s) => s.user);
 
+  const destinationFor = (role: 'user' | 'admin'): string =>
+    fromParam ?? (role === 'admin' ? '/admin' : '/mi-cuenta');
+
   useEffect(() => {
-    if (user) navigate(from, { replace: true });
-  }, [user, navigate, from]);
+    if (user) navigate(destinationFor(user.role), { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, navigate, fromParam]);
 
   const { mutate: doLogin, isPending, error } = useLogin();
 
@@ -42,7 +46,9 @@ export function LoginPage() {
 
   function onSubmit(values: LoginFormValues) {
     doLogin(values, {
-      onSuccess: () => navigate(from, { replace: true }),
+      onSuccess: ({ user: loggedUser }) => {
+        navigate(destinationFor(loggedUser.role), { replace: true });
+      },
     });
   }
 
