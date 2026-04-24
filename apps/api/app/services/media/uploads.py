@@ -21,6 +21,7 @@ from typing import Literal
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import settings
 from app.exceptions import ValidationError
 from app.models.media_file import MediaFile
 from app.models.user import User
@@ -28,6 +29,14 @@ from app.services import audit
 from app.services.media import queue as media_queue
 from app.services.media import r2_client, validators
 from app.utils.ulid import new_ulid
+
+
+def _public_url_for(kind: str, storage_key: str) -> str | None:
+    """Return the public URL for image uploads; None for private-by-default kinds."""
+    if kind != "image" or not settings.r2_public_base_url:
+        return None
+    return f"{settings.r2_public_base_url.rstrip('/')}/{storage_key}"
+
 
 # Match everything that's not [a-zA-Z0-9._-] to keep the storage key safe.
 _UNSAFE_FILENAME_CHARS = re.compile(r"[^A-Za-z0-9._-]+")
@@ -164,7 +173,7 @@ async def commit(
         mime_type=validated.mime_type,
         size_bytes=validated.size_bytes,
         storage_key=storage_key,
-        public_url=None,
+        public_url=_public_url_for(kind, storage_key),
         checksum_sha256=None,
         file_metadata=dict(validated.metadata),
     )

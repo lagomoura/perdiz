@@ -11,6 +11,7 @@ import struct
 
 import httpx
 import pytest
+from app.config import settings
 from app.db.session import AsyncSessionLocal
 from app.models.audit_log import AuditLog
 from app.models.media_file import MediaFile
@@ -462,3 +463,82 @@ async def test_commit_is_audited(client: AsyncClient) -> None:
         )
         assert [r.action for r in rows] == ["media_file.create.image"]
         assert rows[0].actor_role == "admin"
+
+
+async def test_commit_populates_public_url_when_public_base_is_set(
+    client: AsyncClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+
+    monkeypatch.setattr(settings, "r2_public_base_url", "https://cdn.example.com")
+    h = auth_header(await register_and_promote_admin(client))
+    presign_body = (
+        await client.post(
+            "/v1/admin/uploads/presign",
+            json={
+                "kind": "image",
+                "mime_type": "image/png",
+                "size_bytes": len(_PNG_1X1),
+                "filename": "foo.png",
+            },
+            headers=h,
+        )
+    ).json()
+    await _put_to_minio(presign_body["upload_url"], _PNG_1X1, "image/png")
+    commit = await client.post(
+        "/v1/admin/uploads/commit",
+        json={
+            "storage_key": presign_body["storage_key"],
+            "kind": "image",
+            "mime_type": "image/png",
+            "size_bytes": len(_PNG_1X1),
+        },
+        headers=h,
+    )
+    assert commit.status_code == 201
+    async with AsyncSessionLocal() as s:
+        row = (
+            await s.execute(
+                select(MediaFile).where(MediaFile.id == commit.json()["media_file"]["id"])
+            )
+        ).scalar_one()
+    assert row.public_url == f"https://cdn.example.com/{presign_body['storage_key']}"
+
+
+async def test_commit_stl_does_not_set_public_url(
+    client: AsyncClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+
+    monkeypatch.setattr(settings, "r2_public_base_url", "https://cdn.example.com")
+    h = auth_header(await register_and_promote_admin(client))
+    stl = _make_binary_stl()
+    presign_body = (
+        await client.post(
+            "/v1/admin/uploads/presign",
+            json={
+                "kind": "model_stl",
+                "mime_type": "application/sla",
+                "size_bytes": len(stl),
+                "filename": "m.stl",
+            },
+            headers=h,
+        )
+    ).json()
+    await _put_to_minio(presign_body["upload_url"], stl, "application/sla")
+    commit = await client.post(
+        "/v1/admin/uploads/commit",
+        json={
+            "storage_key": presign_body["storage_key"],
+            "kind": "model_stl",
+            "mime_type": "application/sla",
+            "size_bytes": len(stl),
+        },
+        headers=h,
+    )
+    assert commit.status_code == 201
+    async with AsyncSessionLocal() as s:
+        row = (
+            await s.execute(
+                select(MediaFile).where(MediaFile.id == commit.json()["media_file"]["id"])
+            )
+        ).scalar_one()
+    assert row.public_url is None
