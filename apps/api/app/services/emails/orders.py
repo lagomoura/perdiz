@@ -1,90 +1,72 @@
 """Order lifecycle emails — confirmation, shipped, cancelled, refunded.
 
-These are called from webhooks and admin transitions. They must never
-raise: dev logs via structlog; prod path with Resend is a TODO (lands
-with the email-provider integration PR).
+Called from webhooks and admin transitions. Must never raise: delivery
+failures log but don't break the business operation.
 """
 
 from __future__ import annotations
 
-import structlog
-
-from app.config import settings
 from app.models.order import Order
-
-log = structlog.get_logger(__name__)
+from app.services.emails.client import send_email
 
 
 async def send_order_confirmed(*, to: str, order: Order) -> None:
-    await _send(
-        kind="order_confirmed",
-        to=to,
-        subject=f"Confirmamos tu pedido #{_short(order.id)}",
-        context={
-            "order_id": order.id,
-            "total_cents": order.total_cents,
-            "currency": order.currency,
-        },
+    total = _format_amount(order.total_cents, order.currency)
+    short = _short(order.id)
+    subject = f"Confirmamos tu pedido #{short}"
+    html = (
+        f"<p>¡Gracias por tu compra en <strong>p3rDiz</strong>!</p>"
+        f"<p>Confirmamos tu pedido <strong>#{short}</strong>.</p>"
+        f"<p>Total: <strong>{total}</strong></p>"
+        f"<p>Te avisaremos cuando esté listo para envío.</p>"
     )
+    text = (
+        f"Gracias por tu compra en p3rDiz.\n"
+        f"Pedido #{short} confirmado. Total: {total}.\n"
+        f"Te avisaremos cuando esté listo."
+    )
+    await send_email(to=to, subject=subject, html=html, text=text, kind="order_confirmed")
 
 
 async def send_order_shipped(*, to: str, order: Order) -> None:
-    await _send(
-        kind="order_shipped",
-        to=to,
-        subject=f"Tu pedido #{_short(order.id)} está en camino",
-        context={"order_id": order.id, "shipping_method": order.shipping_method},
-    )
+    short = _short(order.id)
+    method = "retiro en sucursal" if order.shipping_method == "pickup" else "envío a domicilio"
+    subject = f"Tu pedido #{short} está en camino"
+    html = f"<p>Tu pedido <strong>#{short}</strong> fue despachado.</p><p>Modalidad: {method}.</p>"
+    text = f"Pedido #{short} despachado. Modalidad: {method}."
+    await send_email(to=to, subject=subject, html=html, text=text, kind="order_shipped")
 
 
 async def send_order_cancelled(*, to: str, order: Order) -> None:
-    await _send(
-        kind="order_cancelled",
-        to=to,
-        subject=f"Tu pedido #{_short(order.id)} fue cancelado",
-        context={"order_id": order.id},
+    short = _short(order.id)
+    subject = f"Tu pedido #{short} fue cancelado"
+    html = (
+        f"<p>Tu pedido <strong>#{short}</strong> fue cancelado.</p>"
+        "<p>Si pagaste, el reembolso se procesa por separado.</p>"
     )
+    text = f"Pedido #{short} cancelado. Si pagaste, el reembolso se procesa por separado."
+    await send_email(to=to, subject=subject, html=html, text=text, kind="order_cancelled")
 
 
 async def send_order_refunded(*, to: str, order: Order) -> None:
-    await _send(
-        kind="order_refunded",
-        to=to,
-        subject=f"Reembolso del pedido #{_short(order.id)}",
-        context={"order_id": order.id, "total_cents": order.total_cents},
+    total = _format_amount(order.total_cents, order.currency)
+    short = _short(order.id)
+    subject = f"Reembolso del pedido #{short}"
+    html = (
+        f"<p>Procesamos el reembolso de tu pedido <strong>#{short}</strong>.</p>"
+        f"<p>Monto: <strong>{total}</strong>.</p>"
+        "<p>Puede tardar algunos días hábiles en reflejarse según tu medio de pago.</p>"
     )
-
-
-async def _send(
-    *,
-    kind: str,
-    to: str,
-    subject: str,
-    context: dict[str, object],
-) -> None:
-    try:
-        if not settings.resend_api_key:
-            log.info(
-                "email.dev_stub",
-                kind=kind,
-                to=_mask_email(to),
-                subject=subject,
-                context=context,
-            )
-            return
-        # TODO(email): integrate Resend SDK + MJML templates.
-        log.info("email.send_queued", kind=kind, to=_mask_email(to))
-    except Exception as exc:  # pragma: no cover - logging-only guard
-        log.warning("email.send_failed", kind=kind, error=str(exc))
-
-
-def _mask_email(email: str) -> str:
-    local, _, domain = email.partition("@")
-    if not domain:
-        return "***"
-    visible = local[0] if local else "*"
-    return f"{visible}***@{domain}"
+    text = f"Reembolso del pedido #{short}: {total}. Puede tardar días hábiles en reflejarse."
+    await send_email(to=to, subject=subject, html=html, text=text, kind="order_refunded")
 
 
 def _short(order_id: str) -> str:
     return order_id[-6:]
+
+
+def _format_amount(cents: int, currency: str) -> str:
+    pesos = cents / 100
+    # Argentine locale: 1.234,56
+    formatted = f"{pesos:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    return f"{currency} {formatted}"
