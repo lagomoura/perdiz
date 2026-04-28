@@ -15,13 +15,13 @@ async def send_order_confirmed(*, to: str, order: Order) -> None:
     short = _short(order.id)
     subject = f"Confirmamos tu pedido #{short}"
     html = (
-        f"<p>¡Gracias por tu compra en <strong>p3rDiz</strong>!</p>"
+        f"<p>¡Gracias por tu compra en <strong>Aura</strong>!</p>"
         f"<p>Confirmamos tu pedido <strong>#{short}</strong>.</p>"
         f"<p>Total: <strong>{total}</strong></p>"
         f"<p>Te avisaremos cuando esté listo para envío.</p>"
     )
     text = (
-        f"Gracias por tu compra en p3rDiz.\n"
+        f"Gracias por tu compra en Aura.\n"
         f"Pedido #{short} confirmado. Total: {total}.\n"
         f"Te avisaremos cuando esté listo."
     )

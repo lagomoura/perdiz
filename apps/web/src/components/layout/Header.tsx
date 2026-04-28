@@ -24,25 +24,25 @@ export function Header() {
     <header className="sticky top-0 z-30 border-b border-neutral-100 bg-neutral-0/95 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-6">
         <Link to="/" className="flex-shrink-0" aria-label="Ir al inicio">
-          <Logo className="h-14 md:h-16" />
+          <Logo className="h-48 md:h-64" />
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex" aria-label="Navegación principal">
           <Link
             to="/catalogo"
-            className="text-sm font-medium text-neutral-600 transition-colors hover:text-brand-graphite-900"
+            className="text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900"
           >
             {t('nav.catalog')}
           </Link>
           <Link
             to="/#como-funciona"
-            className="text-sm font-medium text-neutral-600 transition-colors hover:text-brand-graphite-900"
+            className="text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900"
           >
             {t('nav.howItWorks')}
           </Link>
           <Link
             to="/#contacto"
-            className="text-sm font-medium text-neutral-600 transition-colors hover:text-brand-graphite-900"
+            className="text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900"
           >
             {t('nav.contact')}
           </Link>
@@ -53,7 +53,7 @@ export function Header() {
             <>
               <Link
                 to="/mi-cuenta"
-                className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-50 hover:text-brand-graphite-900"
+                className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-50 hover:text-neutral-900"
               >
                 <User size={16} aria-hidden="true" />
                 <span className="hidden sm:inline">
@@ -62,7 +62,7 @@ export function Header() {
               </Link>
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm text-neutral-600 transition-colors hover:bg-neutral-50 hover:text-brand-graphite-900"
+                className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm text-neutral-600 transition-colors hover:bg-neutral-50 hover:text-neutral-900"
                 aria-label={t('auth.logout')}
               >
                 <LogOut size={16} aria-hidden="true" />
@@ -73,7 +73,7 @@ export function Header() {
             <>
               <Link
                 to="/auth/ingresar"
-                className="rounded-md px-4 py-2 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-50 hover:text-brand-graphite-900"
+                className="rounded-md px-4 py-2 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-50 hover:text-neutral-900"
               >
                 {t('nav.login')}
               </Link>

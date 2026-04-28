@@ -1,6 +1,6 @@
-# p3rDiz — Documentación
+# Aura — Documentación
 
-Documentación fuente-de-verdad para el ecommerce **p3rDiz – Soluciones 3D**.
+Documentación fuente-de-verdad para el ecommerce **Aura – Impresiones 3D**.
 Todo agente (humano o automático) que escriba código en este repositorio **debe** leer los documentos indicados antes de modificar o generar archivos.
 
 ## Cómo está organizada

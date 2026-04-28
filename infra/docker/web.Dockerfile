@@ -8,7 +8,7 @@ RUN npm ci --workspaces --include-workspace-root
 
 COPY packages/api-client ./packages/api-client
 COPY apps/web ./apps/web
-ARG VITE_API_BASE_URL=https://api.perdiz.local/v1
+ARG VITE_API_BASE_URL=https://api.aura.local/v1
 ARG VITE_APP_ENV=production
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 ENV VITE_APP_ENV=$VITE_APP_ENV

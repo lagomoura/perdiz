@@ -1,4 +1,4 @@
-# Deployment — p3rDiz
+# Deployment — Aura
 
 Infra pragmática para MVP en Hetzner. Single-node, Docker Compose, coste mínimo.
 
@@ -51,7 +51,7 @@ infra/
 ## Caddyfile (producción, resumen)
 
 ```
-perdiz.ar {
+aura.ar {
   encode zstd gzip
   header {
     Strict-Transport-Security "max-age=31536000; includeSubDomains"
@@ -64,12 +64,12 @@ perdiz.ar {
   file_server
 }
 
-api.perdiz.ar {
+api.aura.ar {
   encode zstd gzip
   reverse_proxy api:8000
 }
 
-uptime.perdiz.ar {
+uptime.aura.ar {
   basicauth {
     admin {env.UPTIME_BASIC_AUTH_HASH}
   }
@@ -114,11 +114,11 @@ Multi-stage:
    - Checkout.
    - Setup Python + uv o Node 20.
    - Corre tests y linting.
-   - Build imagen Docker con tag `ghcr.io/<org>/perdiz-api:<sha>` y `:latest-staging` o `:latest-prod`.
+   - Build imagen Docker con tag `ghcr.io/<org>/aura-api:<sha>` y `:latest-staging` o `:latest-prod`.
    - Push a GHCR.
 2. Job `deploy` (sshaction):
    - Conecta al VPS como usuario `deploy`.
-   - `cd /opt/perdiz && git pull`.
+   - `cd /opt/aura && git pull`.
    - `docker compose pull && docker compose up -d --remove-orphans`.
    - Alembic corre en entrypoint del contenedor api.
    - Healthcheck post-deploy: hace `GET /health/deep`; si falla, hace rollback al tag anterior.
@@ -140,7 +140,7 @@ Por entorno (`staging`, `production`):
 ## Postgres en Docker
 
 - Imagen `postgres:16-alpine`.
-- Volumen `perdiz_pgdata:/var/lib/postgresql/data`.
+- Volumen `aura_pgdata:/var/lib/postgresql/data`.
 - Variables `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`.
 - `shared_buffers`, `work_mem` ajustados en `postgresql.conf` montado.
 - Usuario de aplicación **no superuser**, con permisos mínimos (SELECT/INSERT/UPDATE/DELETE en tablas de app, INSERT/SELECT en `audit_log`).
@@ -148,21 +148,21 @@ Por entorno (`staging`, `production`):
 
 ## Redis en Docker
 
-- `redis:7-alpine`, `appendonly yes`, volumen persistente (`perdiz_redisdata`).
+- `redis:7-alpine`, `appendonly yes`, volumen persistente (`aura_redisdata`).
 
 ## Backups
 
 Contenedor `backup`:
 
 - Cron interno: diario 03:00 UTC (00:00 ART).
-- `pg_dump -Fc` → comprime → encripta con `age` → sube a bucket R2 `perdiz-backups` con key `postgres/{YYYY}/{MM}/{DD}.dump.age`.
+- `pg_dump -Fc` → comprime → encripta con `age` → sube a bucket R2 `aura-backups` con key `postgres/{YYYY}/{MM}/{DD}.dump.age`.
 - Retención: 30 diarios + 12 mensuales (keep-first-of-month). Script de purga corre al final del backup.
 - Semana 1 tras ir a prod: **verificar restore** con el script `restore.sh` en staging.
 
 R2 buckets recomendados:
-- `perdiz-media-prod` — media pública (imágenes, GLB) con CORS apropiado.
-- `perdiz-media-private` — uploads de usuario + STL originales, sin public access.
-- `perdiz-backups` — backups cifrados, sin public access.
+- `aura-media-prod` — media pública (imágenes, GLB) con CORS apropiado.
+- `aura-media-private` — uploads de usuario + STL originales, sin public access.
+- `aura-backups` — backups cifrados, sin public access.
 
 ## Caddyfile + volumes (compose extracto)
 
@@ -179,8 +179,8 @@ services:
       - caddy_config:/config
 
 volumes:
-  perdiz_pgdata:
-  perdiz_redisdata:
+  aura_pgdata:
+  aura_redisdata:
   web_dist:
   caddy_data:
   caddy_config:
@@ -197,7 +197,7 @@ volumes:
 Para cualquier secret (p.ej. `R2_SECRET_ACCESS_KEY`):
 
 1. Crear nueva credencial en el provider sin eliminar la vieja.
-2. Actualizar `/opt/perdiz/.env.production` en VPS con el nuevo valor.
+2. Actualizar `/opt/aura/.env.production` en VPS con el nuevo valor.
 3. `docker compose up -d --no-deps api worker` (reinicia solo lo necesario).
 4. Verificar logs limpios.
 5. Revocar la credencial vieja en el provider.

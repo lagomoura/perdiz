@@ -29,7 +29,7 @@ export function ProductDetailPage() {
   if (error || !product) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-24 text-center">
-        <h1 className="text-xl font-semibold text-brand-graphite-900">
+        <h1 className="text-xl font-semibold text-neutral-900">
           Producto no encontrado
         </h1>
         <p className="mt-2 text-neutral-600">
@@ -53,13 +53,13 @@ export function ProductDetailPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 md:px-6">
       <nav className="mb-6 flex items-center gap-2 text-sm text-neutral-500">
-        <Link to="/catalogo" className="hover:text-brand-graphite-900">
+        <Link to="/catalogo" className="hover:text-neutral-900">
           Catálogo
         </Link>
         <span>/</span>
         <Link
           to={`/catalogo?category=${product.category.slug}`}
-          className="hover:text-brand-graphite-900"
+          className="hover:text-neutral-900"
         >
           {product.category.name}
         </Link>
@@ -107,7 +107,7 @@ export function ProductDetailPage() {
 
         {/* Info */}
         <div>
-          <h1 className="font-display text-3xl font-bold text-brand-graphite-900 md:text-4xl">
+          <h1 className="font-display text-3xl font-bold text-neutral-900 md:text-4xl">
             {product.name}
           </h1>
 
@@ -122,7 +122,7 @@ export function ProductDetailPage() {
                 </span>
               </>
             ) : (
-              <span className="text-3xl font-bold text-brand-graphite-900">
+              <span className="text-3xl font-bold text-neutral-900">
                 {formatARS(product.basePriceCents)}
               </span>
             )}
@@ -143,7 +143,7 @@ export function ProductDetailPage() {
                   : 'Bajo pedido'}
             </span>
             {product.customizable && (
-              <span className="inline-block rounded-full bg-brand-orange-50 px-3 py-1 text-xs font-medium text-brand-orange-700">
+              <span className="inline-block rounded-full bg-brand-orange-500/15 px-3 py-1 text-xs font-medium text-brand-orange-500">
                 Personalizable
               </span>
             )}
@@ -151,7 +151,7 @@ export function ProductDetailPage() {
 
           {product.descriptionHtml && (
             <div
-              className="prose prose-sm mt-6 max-w-none text-neutral-700"
+              className="prose prose-sm mt-6 max-w-none text-neutral-600"
               // eslint-disable-next-line react/no-danger
               dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
             />
@@ -170,7 +170,7 @@ export function ProductDetailPage() {
             </Button>
             <Link
               to="/catalogo"
-              className="inline-flex items-center justify-center rounded-md border border-neutral-200 px-6 py-3 text-sm font-medium text-brand-graphite-900 hover:bg-neutral-50"
+              className="inline-flex items-center justify-center rounded-md border border-neutral-200 px-6 py-3 text-sm font-medium text-neutral-900 hover:bg-neutral-50"
             >
               Seguir mirando
             </Link>
@@ -179,13 +179,13 @@ export function ProductDetailPage() {
           <dl className="mt-8 divide-y divide-neutral-200 rounded-lg border border-neutral-200 text-sm">
             <div className="flex justify-between px-4 py-3">
               <dt className="text-neutral-500">Categoría</dt>
-              <dd className="text-brand-graphite-900">{product.category.name}</dd>
+              <dd className="text-neutral-900">{product.category.name}</dd>
             </div>
             {product.stockMode === 'stocked' &&
               product.stockQuantity !== null && (
                 <div className="flex justify-between px-4 py-3">
                   <dt className="text-neutral-500">Stock</dt>
-                  <dd className="text-brand-graphite-900">
+                  <dd className="text-neutral-900">
                     {product.stockQuantity} unidades
                   </dd>
                 </div>
@@ -194,7 +194,7 @@ export function ProductDetailPage() {
               product.leadTimeDays !== null && (
                 <div className="flex justify-between px-4 py-3">
                   <dt className="text-neutral-500">Tiempo de entrega</dt>
-                  <dd className="text-brand-graphite-900">
+                  <dd className="text-neutral-900">
                     {product.leadTimeDays} días
                   </dd>
                 </div>

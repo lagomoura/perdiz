@@ -44,7 +44,7 @@ export function RegisterPage() {
     return (
       <div className="py-4 text-center">
         <CheckCircle className="mx-auto mb-4 h-12 w-12 text-success-500" aria-hidden="true" />
-        <h2 className="font-display text-xl font-bold text-brand-graphite-900">
+        <h2 className="font-display text-xl font-bold text-neutral-900">
           {t('auth.register.successTitle')}
         </h2>
         <p className="mt-2 text-sm text-neutral-600">{t('auth.register.successMessage')}</p>
@@ -60,7 +60,7 @@ export function RegisterPage() {
 
   return (
     <>
-      <h1 className="mb-6 font-display text-2xl font-bold text-brand-graphite-900">
+      <h1 className="mb-6 font-display text-2xl font-bold text-neutral-900">
         {t('auth.register.title')}
       </h1>
 

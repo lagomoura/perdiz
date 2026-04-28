@@ -84,7 +84,7 @@ async def _rate_limit_handler(request: Request, exc: Exception) -> Response:
 
 def create_app() -> FastAPI:
     app = FastAPI(
-        title="p3rDiz API",
+        title="Aura API",
         version="0.0.0",
         docs_url="/docs" if settings.app_debug else None,
         redoc_url=None,

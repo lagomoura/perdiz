@@ -1,19 +1,19 @@
-name: perdiz-dev
+name: aura-dev
 
 services:
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: perdiz
-      POSTGRES_USER: perdiz
-      POSTGRES_PASSWORD: perdiz
+      POSTGRES_DB: aura
+      POSTGRES_USER: aura
+      POSTGRES_PASSWORD: aura
     ports:
       - "5435:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U perdiz -d perdiz"]
+      test: ["CMD-SHELL", "pg_isready -U aura -d aura"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -58,9 +58,9 @@ services:
     entrypoint: >
       /bin/sh -c "
       mc alias set local http://minio:9000 minioadmin minioadmin;
-      mc mb --ignore-existing local/perdiz-media;
-      mc anonymous set download local/perdiz-media;
-      mc mb --ignore-existing local/perdiz-media-private;
+      mc mb --ignore-existing local/aura-media;
+      mc anonymous set download local/aura-media;
+      mc mb --ignore-existing local/aura-media-private;
       exit 0;
       "
 

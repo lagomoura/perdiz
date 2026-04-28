@@ -263,20 +263,20 @@ export function ProductsImportPage() {
   return (
     <div className="mx-auto max-w-5xl">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-bold text-brand-graphite-900">
+        <h1 className="font-display text-2xl font-bold text-neutral-900">
           Importar productos por CSV
         </h1>
         <Link
           to="/admin/productos"
-          className="text-sm text-neutral-600 hover:text-brand-graphite-900"
+          className="text-sm text-neutral-600 hover:text-neutral-900"
         >
           ← Volver a productos
         </Link>
       </div>
 
-      <div className="space-y-4 rounded-xl border border-neutral-200 bg-white p-6">
+      <div className="space-y-4 rounded-xl border border-neutral-200 bg-neutral-50 p-6">
         <div>
-          <p className="text-sm text-neutral-700">
+          <p className="text-sm text-neutral-600">
             Subí un CSV con estas columnas. Las imágenes se cargan después
             entrando a cada producto.
           </p>
@@ -328,7 +328,7 @@ T-Rex chico,DIN-TRX-S,dinosaurios,8500,print_on_demand,,7,50,80x40x60,"figura,di
 
         {parsed && (
           <div>
-            <p className="text-sm text-neutral-700">
+            <p className="text-sm text-neutral-600">
               <strong className="text-green-700">{validRows}</strong> válidas ·{' '}
               <strong className="text-error-500">{invalidRows}</strong> con
               error (se van a saltear)

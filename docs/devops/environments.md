@@ -1,14 +1,14 @@
-# Entornos y variables — p3rDiz
+# Entornos y variables — Aura
 
 ## Entornos definidos
 
 | Entorno | Propósito | URL frontend | URL API |
 |---|---|---|---|
 | `development` | máquina del desarrollador | `http://localhost:5173` | `http://localhost:8000` |
-| `staging` | pruebas pre-prod, integración con sandboxes de pasarelas | `https://staging.perdiz.ar` | `https://api.staging.perdiz.ar` |
-| `production` | público | `https://perdiz.ar` | `https://api.perdiz.ar` |
+| `staging` | pruebas pre-prod, integración con sandboxes de pasarelas | `https://staging.aura.ar` | `https://api.staging.aura.ar` |
+| `production` | público | `https://aura.ar` | `https://api.aura.ar` |
 
-**Nota dominio**: todavía sin comprar. Sustituir `perdiz.ar` por el dominio final cuando se defina.
+**Nota dominio**: todavía sin comprar. Sustituir `aura.ar` por el dominio final cuando se defina.
 
 ## Variables de entorno — backend (`apps/api`)
 
@@ -18,9 +18,9 @@
 |---|---|---|
 | `APP_ENV` | `development` / `staging` / `production` | `production` |
 | `APP_DEBUG` | booleano | `false` |
-| `APP_BASE_URL` | URL pública del API | `https://api.perdiz.ar` |
-| `WEB_BASE_URL` | URL pública del front (para links en emails, callbacks) | `https://perdiz.ar` |
-| `ALLOWED_ORIGINS` | CSV de orígenes permitidos | `https://perdiz.ar` |
+| `APP_BASE_URL` | URL pública del API | `https://api.aura.ar` |
+| `WEB_BASE_URL` | URL pública del front (para links en emails, callbacks) | `https://aura.ar` |
+| `ALLOWED_ORIGINS` | CSV de orígenes permitidos | `https://aura.ar` |
 
 ### Base de datos
 
@@ -64,7 +64,7 @@
 | `R2_ACCOUNT_ID` | |
 | `R2_ACCESS_KEY_ID` | |
 | `R2_SECRET_ACCESS_KEY` | |
-| `R2_BUCKET` | `perdiz-media-prod` |
+| `R2_BUCKET` | `aura-media-prod` |
 | `R2_PUBLIC_BASE_URL` | URL pública del bucket (si `public`), o CDN custom |
 | `R2_REGION` | `auto` |
 
@@ -85,8 +85,8 @@
 | Variable | Descripción |
 |---|---|
 | `RESEND_API_KEY` | |
-| `EMAIL_FROM` | `p3rDiz <hola@perdiz.ar>` |
-| `EMAIL_SUPPORT` | `soporte@perdiz.ar` |
+| `EMAIL_FROM` | `Aura <hola@aura.ar>` |
+| `EMAIL_SUPPORT` | `soporte@aura.ar` |
 
 ### Observabilidad
 
@@ -110,7 +110,7 @@ Vite inyecta solo vars prefijadas con `VITE_`:
 | Variable | Descripción |
 |---|---|
 | `VITE_APP_ENV` | `development` / `staging` / `production` |
-| `VITE_API_BASE_URL` | `https://api.perdiz.ar/v1` |
+| `VITE_API_BASE_URL` | `https://api.aura.ar/v1` |
 | `VITE_SENTRY_DSN` | DSN de frontend (distinto del de backend) |
 | `VITE_MERCADOPAGO_PUBLIC_KEY` | pública |
 | `VITE_STRIPE_PUBLISHABLE_KEY` | pública |
@@ -136,7 +136,7 @@ Vite inyecta solo vars prefijadas con `VITE_`:
 
 - **Dev**: archivos locales. Generar un `.env.local` desde `.env.example` al clonar.
 - **CI (GitHub Actions)**: secrets del repo. Categorizados por ambiente con entornos de GHA (`staging`, `production`).
-- **VPS (Hetzner)**: archivo `/opt/perdiz/.env.{staging|production}` con permisos `0600`, propietario del usuario `deploy`. Cargado por docker compose con `env_file`.
+- **VPS (Hetzner)**: archivo `/opt/aura/.env.{staging|production}` con permisos `0600`, propietario del usuario `deploy`. Cargado por docker compose con `env_file`.
 - **Rotación**: procedimiento documentado en `devops/deployment.md`. Secretos expuestos se rotan inmediatamente; el sistema debe funcionar durante la rotación con la estrategia `_NEXT` descrita en `architecture/security.md`.
 
 ## Servicios externos — cómo conseguir credenciales
@@ -153,11 +153,11 @@ Vite inyecta solo vars prefijadas con `VITE_`:
 ## Dominios y DNS
 
 Cuando se compre el dominio:
-- `perdiz.ar` → VPS Hetzner (A record).
-- `www.perdiz.ar` → redirect a `perdiz.ar` (Caddy).
-- `api.perdiz.ar` → VPS (A record).
-- `staging.perdiz.ar` y `api.staging.perdiz.ar` → mismo VPS o subVPS.
-- `media.perdiz.ar` (opcional) → CNAME a bucket R2 custom domain.
+- `aura.ar` → VPS Hetzner (A record).
+- `www.aura.ar` → redirect a `aura.ar` (Caddy).
+- `api.aura.ar` → VPS (A record).
+- `staging.aura.ar` y `api.staging.aura.ar` → mismo VPS o subVPS.
+- `media.aura.ar` (opcional) → CNAME a bucket R2 custom domain.
 - SPF/DKIM/DMARC para emails Resend.
 
 ## Timezone del proceso

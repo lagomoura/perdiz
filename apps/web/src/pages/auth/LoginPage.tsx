@@ -54,7 +54,7 @@ export function LoginPage() {
 
   return (
     <>
-      <h1 className="mb-6 font-display text-2xl font-bold text-brand-graphite-900">
+      <h1 className="mb-6 font-display text-2xl font-bold text-neutral-900">
         {t('auth.login.title')}
       </h1>
 
@@ -77,7 +77,7 @@ export function LoginPage() {
             <Label htmlFor="password">{t('auth.login.password')}</Label>
             <Link
               to="/auth/olvide-password"
-              className="text-xs text-neutral-600 hover:text-brand-graphite-900"
+              className="text-xs text-neutral-600 hover:text-neutral-900"
             >
               {t('auth.login.forgotPassword')}
             </Link>

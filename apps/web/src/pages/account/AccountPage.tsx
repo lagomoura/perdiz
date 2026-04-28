@@ -19,7 +19,7 @@ export function AccountPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="font-display text-3xl font-bold text-brand-graphite-900">
+      <h1 className="font-display text-3xl font-bold text-neutral-900">
         {t('account.title')}
       </h1>
 
@@ -27,7 +27,7 @@ export function AccountPage() {
         <div className="flex items-start gap-3 rounded-lg border border-warning-500/30 bg-warning-500/10 p-4">
           <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-warning-500" aria-hidden="true" />
           <div className="flex-1">
-            <p className="text-sm font-medium text-brand-graphite-900">
+            <p className="text-sm font-medium text-neutral-900">
               {t('account.verificationBanner')}
             </p>
             {resendSuccess ? (
@@ -70,7 +70,7 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
   return (
     <div className="flex items-center justify-between px-5 py-4">
       <span className="text-sm text-neutral-600">{label}</span>
-      <span className="text-sm font-medium text-brand-graphite-900">{children}</span>
+      <span className="text-sm font-medium text-neutral-900">{children}</span>
     </div>
   );
 }

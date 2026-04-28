@@ -16,7 +16,7 @@ const variantClasses: Record<Variant, string> = {
   secondary:
     'bg-brand-graphite-900 text-white hover:bg-brand-graphite-700 focus-visible:shadow-focus disabled:opacity-50',
   ghost:
-    'text-brand-graphite-900 hover:bg-neutral-100 focus-visible:shadow-focus disabled:opacity-50',
+    'text-neutral-900 hover:bg-neutral-100 focus-visible:shadow-focus disabled:opacity-50',
   destructive:
     'bg-error-500 text-white hover:opacity-90 focus-visible:shadow-focus disabled:opacity-50',
 };

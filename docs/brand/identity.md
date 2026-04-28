@@ -1,8 +1,8 @@
-# Identidad de marca — p3rDiz
+# Identidad de marca — Aura
 
 ## Esencia
 
-**p3rDiz** es una marca argentina de **soluciones de impresión 3D** que combina precisión técnica con una estética geométrica y una comunicación cercana. La perdiz (ave criolla, ligada al campo argentino) se reinterpreta en estilo **low-poly**: raíces locales expresadas en lenguaje digital. Ese cruce —tradición argentina + estética de malla 3D— es el corazón de la marca.
+**Aura** es una marca argentina de **impresiones 3D** que combina precisión técnica con una estética geométrica y una comunicación cercana. El isotipo es la letra **A** estilizada con la boquilla de una impresora 3D depositando capas, sobre un disco oscuro con halo cálido (rojo-naranja → amarillo): la pieza naciendo, capa a capa, en la luz. Ese gesto —ingeniería precisa expresada en lenguaje cálido— es el corazón de la marca.
 
 ## Posicionamiento
 
@@ -43,7 +43,7 @@ El punto justo: **amiga técnica que sabe lo que hace**.
 
 ## Claim y taglines
 
-- **Tagline oficial** (ya en logo): *Soluciones 3D*.
+- **Tagline oficial** (ya en logo): *Impresiones 3D*.
 - **Claims secundarios** (para landings, redes, campañas):
   - *Imaginá. Imprimimos.*
   - *Impreso con precisión, pensado con cariño.*

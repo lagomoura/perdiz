@@ -41,7 +41,7 @@ export function VerifyEmailPage() {
   if (!token) {
     return (
       <div className="py-4 text-center">
-        <h2 className="font-display text-xl font-bold text-brand-graphite-900">
+        <h2 className="font-display text-xl font-bold text-neutral-900">
           {t('auth.verify.title')}
         </h2>
         <p className="mt-2 text-sm text-neutral-600">{t('auth.verify.noToken')}</p>
@@ -72,7 +72,7 @@ export function VerifyEmailPage() {
     return (
       <div className="py-4 text-center">
         <CheckCircle className="mx-auto mb-4 h-12 w-12 text-success-500" aria-hidden="true" />
-        <h2 className="font-display text-xl font-bold text-brand-graphite-900">
+        <h2 className="font-display text-xl font-bold text-neutral-900">
           {t('auth.verify.successTitle')}
         </h2>
         <p className="mt-2 text-sm text-neutral-600">{t('auth.verify.successMessage')}</p>
@@ -90,7 +90,7 @@ export function VerifyEmailPage() {
     return (
       <div className="py-4 text-center">
         <XCircle className="mx-auto mb-4 h-12 w-12 text-error-500" aria-hidden="true" />
-        <h2 className="font-display text-xl font-bold text-brand-graphite-900">
+        <h2 className="font-display text-xl font-bold text-neutral-900">
           {t('auth.verify.errorTitle')}
         </h2>
         <p className="mt-2 text-sm text-neutral-600">{t('auth.verify.errorMessage')}</p>

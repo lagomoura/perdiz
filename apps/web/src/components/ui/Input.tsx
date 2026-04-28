@@ -33,7 +33,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     <input
       ref={ref}
       className={cn(
-        'w-full rounded-md border bg-neutral-0 px-3 py-2 text-sm text-brand-graphite-900 placeholder:text-neutral-400',
+        'w-full rounded-md border bg-neutral-0 px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400',
         'transition-colors focus-visible:outline-none focus-visible:shadow-focus',
         error ? 'border-error-500' : 'border-neutral-200 hover:border-neutral-400',
         'disabled:cursor-not-allowed disabled:opacity-50',

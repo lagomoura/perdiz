@@ -29,7 +29,7 @@ _PNG_1X1 = bytes.fromhex(
 
 
 def _make_binary_stl(triangles: int = 2) -> bytes:
-    header = b"p3rdiz test stl".ljust(80, b"\x00")
+    header = b"aura test stl".ljust(80, b"\x00")
     body = b"\x00" * (50 * triangles)
     return header + struct.pack("<I", triangles) + body
 

@@ -1,4 +1,4 @@
-name: perdiz-prod
+name: aura-prod
 
 services:
   caddy:
@@ -8,7 +8,7 @@ services:
       - "80:80"
       - "443:443"
     environment:
-      PERDIZ_DOMAIN: ${PERDIZ_DOMAIN:-perdiz.local}
+      AURA_DOMAIN: ${AURA_DOMAIN:-aura.local}
       UPTIME_BASIC_AUTH_HASH: ${UPTIME_BASIC_AUTH_HASH:-}
     volumes:
       - ../caddy/Caddyfile:/etc/caddy/Caddyfile:ro
@@ -21,9 +21,9 @@ services:
   api:
     build:
       context: ../../apps/api
-    image: perdiz-api:local
+    image: aura-api:local
     restart: unless-stopped
-    env_file: /opt/perdiz/.env.production
+    env_file: /opt/aura/.env.production
     depends_on:
       postgres:
         condition: service_healthy
@@ -35,9 +35,9 @@ services:
   worker:
     build:
       context: ../../apps/api
-    image: perdiz-api:local
+    image: aura-api:local
     restart: unless-stopped
-    env_file: /opt/perdiz/.env.production
+    env_file: /opt/aura/.env.production
     command: ["arq", "app.tasks.worker.WorkerSettings"]
     depends_on:
       redis:
@@ -46,11 +46,11 @@ services:
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
-    env_file: /opt/perdiz/.env.production.postgres
+    env_file: /opt/aura/.env.production.postgres
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U perdiz"]
+      test: ["CMD-SHELL", "pg_isready -U aura"]
       interval: 10s
       timeout: 5s
       retries: 5

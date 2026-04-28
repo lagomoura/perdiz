@@ -1,10 +1,10 @@
-# API Contract — p3rDiz
+# API Contract — Aura
 
 Contrato REST público del backend. Base URL: `/api/v1`. La especificación OpenAPI real se autogenera desde FastAPI; este documento es la **referencia humana** que obliga al nombre, forma y comportamiento de los endpoints.
 
 ## Convenciones
 
-- **Base URL**: `https://api.perdiz.ar/v1` en prod; `http://localhost:8000/v1` en dev.
+- **Base URL**: `https://api.aura.ar/v1` en prod; `http://localhost:8000/v1` en dev.
 - **Autenticación**: `Authorization: Bearer <access_token>` excepto donde se indique lo contrario.
 - **Content-Type**: `application/json` en requests y responses. Excepciones documentadas explícitamente.
 - **Idempotencia**: endpoints de mutación aceptan `Idempotency-Key` (opcional). Primera respuesta se cachea 24h para la misma key.

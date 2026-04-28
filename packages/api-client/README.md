@@ -1,4 +1,4 @@
-# @perdiz/api-client
+# @aura/api-client
 
 Cliente TypeScript generado desde el OpenAPI de `apps/api`. Regenerado en CI.
 

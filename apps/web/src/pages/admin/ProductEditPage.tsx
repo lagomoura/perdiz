@@ -194,7 +194,7 @@ export function ProductEditPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      <h1 className="font-display text-2xl font-bold text-brand-graphite-900">
+      <h1 className="font-display text-2xl font-bold text-neutral-900">
         {isEdit ? 'Editar producto' : 'Nuevo producto'}
       </h1>
 
@@ -204,7 +204,7 @@ export function ProductEditPage() {
         <form
           onSubmit={handleSubmit}
           noValidate
-          className="space-y-5 rounded-xl border border-neutral-200 bg-white p-6"
+          className="space-y-5 rounded-xl border border-neutral-200 bg-neutral-50 p-6"
         >
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
@@ -263,7 +263,7 @@ export function ProductEditPage() {
               onChange={(e) =>
                 setForm((f) => ({ ...f, categoryId: e.target.value }))
               }
-              className="mt-1 w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm"
             >
               <option value="">— Elegí una categoría —</option>
               {categoryOptions.map((o) => (
@@ -283,7 +283,7 @@ export function ProductEditPage() {
               onChange={(e) =>
                 setForm((f) => ({ ...f, description: e.target.value }))
               }
-              className="mt-1 w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm"
               placeholder="Qué es, para qué sirve, detalles importantes…"
             />
           </div>
@@ -315,7 +315,7 @@ export function ProductEditPage() {
                     status: e.target.value as ProductStatus,
                   }))
                 }
-                className="mt-1 w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm"
               >
                 <option value="draft">Borrador</option>
                 <option value="active">Activo</option>
@@ -332,8 +332,8 @@ export function ProductEditPage() {
                   key={m}
                   className={`flex-1 cursor-pointer rounded-lg border px-4 py-3 text-sm ${
                     form.stockMode === m
-                      ? 'border-brand-orange-500 bg-brand-orange-50'
-                      : 'border-neutral-300 bg-white'
+                      ? 'border-brand-orange-500 bg-brand-orange-500/15'
+                      : 'border-neutral-200 bg-neutral-50'
                   }`}
                 >
                   <input

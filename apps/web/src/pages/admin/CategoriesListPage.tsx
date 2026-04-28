@@ -43,7 +43,7 @@ export function CategoriesListPage() {
   return (
     <div className="mx-auto max-w-5xl">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-bold text-brand-graphite-900">
+        <h1 className="font-display text-2xl font-bold text-neutral-900">
           Categorías
         </h1>
         <div className="flex gap-2">
@@ -68,7 +68,7 @@ export function CategoriesListPage() {
             className={`rounded-full px-3 py-1 ${
               statusFilter === s
                 ? 'bg-brand-graphite-900 text-white'
-                : 'bg-white text-neutral-700 hover:bg-neutral-100'
+                : 'bg-neutral-50 text-neutral-600 hover:bg-neutral-100'
             }`}
           >
             {s === 'all' ? 'Todas' : s === 'active' ? 'Activas' : 'Archivadas'}
@@ -82,7 +82,7 @@ export function CategoriesListPage() {
         </div>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
+      <div className="overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50">
         {isLoading && (
           <p className="p-6 text-sm text-neutral-500">Cargando…</p>
         )}
@@ -118,7 +118,7 @@ export function CategoriesListPage() {
                       {c.depth > 0 && (
                         <span className="mr-2 text-neutral-400">└</span>
                       )}
-                      <span className="font-medium text-brand-graphite-900">
+                      <span className="font-medium text-neutral-900">
                         {c.name}
                       </span>
                     </span>

@@ -34,7 +34,7 @@ class _Capture:
 def _setup(monkeypatch: pytest.MonkeyPatch) -> None:
     _Capture.reset()
     monkeypatch.setattr(settings, "resend_api_key", "re_test_key")
-    monkeypatch.setattr(settings, "email_from", "p3rDiz <x@test.dev>")
+    monkeypatch.setattr(settings, "email_from", "Aura <x@test.dev>")
     monkeypatch.setattr(email_client.resend.Emails, "send", _Capture.send)
 
 

@@ -30,13 +30,13 @@ export function AdminLayout() {
   const baseLink =
     'block rounded-lg px-3 py-2 text-sm font-medium transition-colors';
   const inactive = 'text-neutral-600 hover:bg-neutral-100';
-  const active = 'bg-brand-orange-50 text-brand-orange-700';
+  const active = 'bg-brand-orange-500/15 text-brand-orange-500';
 
   return (
     <div className="flex min-h-dvh bg-neutral-50">
-      <aside className="flex w-64 shrink-0 flex-col border-r border-neutral-200 bg-white px-4 py-6">
+      <aside className="flex w-64 shrink-0 flex-col border-r border-neutral-200 bg-neutral-50 px-4 py-6">
         <div className="mb-8 flex items-center gap-3 px-2">
-          <Logo className="h-10" />
+          <Logo className="h-32" />
           <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
             admin
           </span>

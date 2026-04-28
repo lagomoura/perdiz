@@ -1,4 +1,4 @@
-# Product Spec — p3rDiz
+# Product Spec — Aura
 
 Especificación funcional del MVP de producción. Toda regla acá declarada es vinculante para backend, frontend y admin.
 

@@ -44,7 +44,7 @@ async def test_send_email_stubs_when_no_api_key(
 
 async def test_send_email_calls_resend_sdk(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(settings, "resend_api_key", "re_test_key")
-    monkeypatch.setattr(settings, "email_from", "p3rDiz <no-reply@test.dev>")
+    monkeypatch.setattr(settings, "email_from", "Aura <no-reply@test.dev>")
     monkeypatch.setattr(email_client.resend.Emails, "send", _Capture.send)
 
     await email_client.send_email(
@@ -56,7 +56,7 @@ async def test_send_email_calls_resend_sdk(monkeypatch: pytest.MonkeyPatch) -> N
     )
 
     assert _Capture.params == {
-        "from": "p3rDiz <no-reply@test.dev>",
+        "from": "Aura <no-reply@test.dev>",
         "to": ["user@example.com"],
         "subject": "Asunto",
         "html": "<p>cuerpo</p>",

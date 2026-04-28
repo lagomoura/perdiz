@@ -128,7 +128,7 @@ async def start_checkout(
         order_id=order.id,
         amount_cents=total_cents,
         currency="ARS",
-        description=f"p3rDiz · pedido #{order.id[-6:]}",
+        description=f"Aura · pedido #{order.id[-6:]}",
         success_url=f"{settings.web_base_url}/checkout/success?order={order.id}",
         failure_url=f"{settings.web_base_url}/checkout/failure?order={order.id}",
         pending_url=f"{settings.web_base_url}/checkout/pending?order={order.id}",

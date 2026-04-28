@@ -1,4 +1,4 @@
-# p3rDiz — Soluciones 3D
+# Aura — Impresiones 3D
 
 Ecommerce de impresiones 3D. Monorepo con frontend React + backend FastAPI.
 

@@ -19,7 +19,7 @@ export function ProductCard({ product }: { product: PublicProduct }) {
   return (
     <Link
       to={`/producto/${product.slug}`}
-      className="group flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white transition-shadow hover:shadow-md"
+      className="group flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50 transition-shadow hover:shadow-md"
     >
       <div className="relative aspect-square overflow-hidden bg-neutral-100">
         {primaryImage ? (
@@ -48,7 +48,7 @@ export function ProductCard({ product }: { product: PublicProduct }) {
 
       <div className="flex flex-1 flex-col p-4">
         <p className="text-xs text-neutral-500">{product.category.name}</p>
-        <h3 className="mt-1 line-clamp-2 font-medium text-brand-graphite-900">
+        <h3 className="mt-1 line-clamp-2 font-medium text-neutral-900">
           {product.name}
         </h3>
         <div className="mt-auto pt-3">
@@ -62,7 +62,7 @@ export function ProductCard({ product }: { product: PublicProduct }) {
               </span>
             </div>
           ) : (
-            <span className="text-lg font-bold text-brand-graphite-900">
+            <span className="text-lg font-bold text-neutral-900">
               {formatARS(product.priceCents)}
             </span>
           )}

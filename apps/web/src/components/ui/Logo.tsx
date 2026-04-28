@@ -7,8 +7,8 @@ interface LogoProps {
 export function Logo({ className }: LogoProps) {
   return (
     <img
-      src="/brand/logo.svg"
-      alt="p3rDiz — Soluciones 3D"
+      src="/brand/logo.png"
+      alt="Aura — Impresiones 3D"
       className={cn('w-auto', className)}
     />
   );

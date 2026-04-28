@@ -19,7 +19,7 @@ from sqlalchemy import select
 
 # A minimal but valid binary STL with 2 triangles. trimesh accepts this.
 def _valid_stl(triangles: int = 2) -> bytes:
-    header = b"p3rdiz test stl".ljust(80, b"\x00")
+    header = b"aura test stl".ljust(80, b"\x00")
     parts = [header, struct.pack("<I", triangles)]
     # Each triangle: 3 normal floats, 3 vertex floats x 3, uint16 attr.
     # Produce a degenerate but parseable triangle (all zeros).

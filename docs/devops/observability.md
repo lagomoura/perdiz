@@ -1,4 +1,4 @@
-# Observabilidad — p3rDiz
+# Observabilidad — Aura
 
 Qué medir, cómo alertar, qué hacer ante incidentes.
 
@@ -13,8 +13,8 @@ Qué medir, cómo alertar, qué hacer ante incidentes.
 
 Dos proyectos:
 
-- `p3rdiz-api` (backend) — `SENTRY_DSN` en env backend.
-- `p3rdiz-web` (frontend) — `VITE_SENTRY_DSN` en env frontend.
+- `aura-api` (backend) — `SENTRY_DSN` en env backend.
+- `aura-web` (frontend) — `VITE_SENTRY_DSN` en env frontend.
 
 ### Configuración backend
 
@@ -51,13 +51,13 @@ Dos proyectos:
 
 ## Uptime Kuma
 
-Self-hosted en el mismo VPS (contenedor), accesible en `uptime.perdiz.ar` con basic auth.
+Self-hosted en el mismo VPS (contenedor), accesible en `uptime.aura.ar` con basic auth.
 
 Monitores configurados:
-- `GET https://perdiz.ar` cada 60s.
-- `GET https://api.perdiz.ar/health` cada 30s.
-- `GET https://api.perdiz.ar/health/deep` cada 5 min.
-- TLS expiry de `perdiz.ar`, `api.perdiz.ar`.
+- `GET https://aura.ar` cada 60s.
+- `GET https://api.aura.ar/health` cada 30s.
+- `GET https://api.aura.ar/health/deep` cada 5 min.
+- TLS expiry de `aura.ar`, `api.aura.ar`.
 - DNS NS consistency.
 
 Notificaciones: email admin + (futuro) Telegram bot.

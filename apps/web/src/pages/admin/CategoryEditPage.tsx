@@ -126,7 +126,7 @@ export function CategoryEditPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <h1 className="mb-6 font-display text-2xl font-bold text-brand-graphite-900">
+      <h1 className="mb-6 font-display text-2xl font-bold text-neutral-900">
         {isEdit ? 'Editar categoría' : 'Nueva categoría'}
       </h1>
 
@@ -136,7 +136,7 @@ export function CategoryEditPage() {
         <form
           onSubmit={handleSubmit}
           noValidate
-          className="space-y-5 rounded-xl border border-neutral-200 bg-white p-6"
+          className="space-y-5 rounded-xl border border-neutral-200 bg-neutral-50 p-6"
         >
           <div>
             <Label htmlFor="name">Nombre</Label>
@@ -173,7 +173,7 @@ export function CategoryEditPage() {
               onChange={(e) =>
                 setForm((f) => ({ ...f, parentId: e.target.value }))
               }
-              className="mt-1 w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm"
             >
               <option value="">— Sin padre (nivel raíz) —</option>
               {parentOptions.map((o) => (
@@ -193,7 +193,7 @@ export function CategoryEditPage() {
               onChange={(e) =>
                 setForm((f) => ({ ...f, description: e.target.value }))
               }
-              className="mt-1 w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm"
             />
           </div>
 
@@ -243,7 +243,7 @@ export function CategoryEditPage() {
                     status: e.target.value as CategoryStatus,
                   }))
                 }
-                className="mt-1 w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm"
               >
                 <option value="active">Activa</option>
                 <option value="archived">Archivada</option>

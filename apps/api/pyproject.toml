@@ -1,7 +1,7 @@
 [project]
-name = "perdiz-api"
+name = "aura-api"
 version = "0.0.0"
-description = "p3rDiz — backend FastAPI"
+description = "Aura — backend FastAPI"
 requires-python = ">=3.12"
 dependencies = [
   "fastapi>=0.110",

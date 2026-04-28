@@ -7,10 +7,10 @@ set -euo pipefail
 : "${AGE_RECIPIENT:?AGE_RECIPIENT is required}"
 
 DATE=$(date -u +"%Y/%m/%d")
-FILE="/tmp/perdiz_${DATE//\//_}.dump"
+FILE="/tmp/aura_${DATE//\//_}.dump"
 
 echo "==> pg_dump"
-docker exec perdiz-prod-postgres-1 pg_dump -Fc -U perdiz perdiz > "${FILE}"
+docker exec aura-prod-postgres-1 pg_dump -Fc -U aura aura > "${FILE}"
 
 echo "==> encrypt"
 age -r "${AGE_RECIPIENT}" -o "${FILE}.age" "${FILE}"

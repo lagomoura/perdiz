@@ -1,29 +1,30 @@
-# Sistema visual — p3rDiz
+# Sistema visual — Aura
 
 Sistema de diseño. Todo componente en `apps/web` debe derivarse de estos tokens. Cualquier color, radio, sombra o tamaño fuera de los tokens es un bug.
 
 ## Logo
 
-**Archivo fuente (SVG vectorizado)**: `apps/web/public/brand/logo.svg`.
-**Fuente de mayor calidad (no versionada)**: `/source/` (referenciar si se requiere para refinamiento; no usar en build).
+**Archivo principal**: `apps/web/public/brand/logo.png`.
+**Favicons derivados**: `favicon.ico` (32×32 multi-res), `favicon-180.png` (apple-touch), `favicon-192.png`, `favicon-512.png`.
+**Fuente original**: `/source/aura_logo.png` (referenciar si se requiere para regenerar variantes; no usar en build directamente).
 
-**Componentes del logo**:
-- **Isotipo**: perdiz low-poly en escala de grises + círculo naranja (sol detrás).
-- **Logotipo**: "p3rDiz" con "3" como sustituto de la "e", en minúsculas, mix de color grafito y naranja.
-- **Descriptor**: "SOLUCIONES 3D" en versalitas, subrayado con dos barras naranjas.
+**Composición del logo**:
+- **Isotipo**: la letra "A" estilizada con boquilla de impresora 3D arriba, sobre un disco oscuro con halo de gradiente rojo-naranja → amarillo.
+- **Logotipo**: "AURA" en versalitas, color claro con leve sombreado, sobre placa oscura.
+- **Descriptor**: "IMPRESIONES 3D" en versalitas chicas, debajo de "AURA".
 
-**Variantes requeridas** (a producir como SVG):
-1. **Principal** — isotipo + logotipo + descriptor (fondo claro).
-2. **Horizontal** — isotipo a la izquierda, logotipo a la derecha (para headers).
-3. **Isotipo solo** — para favicon, app icon, avatares de redes.
-4. **Monocromo grafito** — para fondos muy claros o aplicaciones donde el naranja rompe.
-5. **Monocromo blanco** — para fondos oscuros.
+**Variantes a producir cuando haga falta**:
+1. **Principal** — composición completa sobre fondo oscuro o claro.
+2. **Horizontal** — isotipo a la izquierda, "AURA / IMPRESIONES 3D" a la derecha (para headers).
+3. **Isotipo solo** — favicon, app icon, avatares de redes.
+4. **Monocromo grafito** — fondos muy claros donde el naranja distrae.
+5. **Monocromo blanco** — fondos oscuros sólidos.
 
-**Zona de respeto**: mínimo equivalente a la altura del círculo naranja en los cuatro lados.
+**Zona de respeto**: mínimo equivalente a la altura del isotipo en los cuatro lados.
 
 **Tamaños mínimos**:
-- Web/digital: 32px de alto para el isotipo; 120px de ancho para la versión completa.
-- Favicon: 32×32 usando solo el isotipo.
+- Web/digital: 64px de alto para el isotipo; el logo completo ya viene cuadrado y se renderiza a `h-28` o más en headers (ver `Header.tsx`).
+- Favicon: `favicon.ico` 32×32 — el detalle de la boquilla se pierde por debajo, evitar tamaños menores.
 
 **No hacer**: distorsionar, reemplazar tipografías, invertir colores de forma arbitraria, encerrar en marcos, aplicar sombras o degradados al logo.
 
@@ -33,9 +34,11 @@ Sistema de diseño. Todo componente en `apps/web` debe derivarse de estos tokens
 
 | Token | Hex | Uso |
 |---|---|---|
-| `brand.orange.500` | `#F26A1F` | Color primario. CTAs, acentos, estados activos. |
-| `brand.orange.600` | `#D9550C` | Hover / pressed sobre el primario. |
-| `brand.orange.100` | `#FEE7D6` | Fondos suaves de énfasis, chips. |
+| `brand.orange.500` | `#E94E1B` | Color primario. CTAs, acentos, estados activos. |
+| `brand.orange.600` | `#C43C12` | Hover / pressed sobre el primario. |
+| `brand.orange.100` | `#FDE0D3` | Fondos suaves de énfasis, chips. |
+| `brand.amber.500` | `#F4B41A` | Acento amarillo del gradiente Aura. Detalles, badges, highlights. |
+| `brand.amber.600` | `#D4980E` | Hover sobre amber. |
 | `brand.graphite.900` | `#1E1E1E` | Tipografía principal, iconografía, headers oscuros. |
 | `brand.graphite.700` | `#3A3A3A` | Tipografía secundaria. |
 
@@ -64,7 +67,7 @@ Cada color de estado tiene variantes `.100` (fondo suave) y `.700` (texto sobre 
 
 ### Contraste
 
-Todo par texto/fondo debe cumplir **WCAG AA** (4.5:1 mínimo en texto normal, 3:1 en texto grande/iconos). El naranja `#F26A1F` sobre blanco **no cumple AA para texto chico**; usarlo solo en botones/CTAs con texto blanco encima o en texto ≥18px bold.
+Todo par texto/fondo debe cumplir **WCAG AA** (4.5:1 mínimo en texto normal, 3:1 en texto grande/iconos). El naranja `#E94E1B` sobre blanco **no cumple AA para texto chico**; usarlo solo en botones/CTAs con texto blanco encima o en texto ≥18px bold. El amarillo `#F4B41A` directamente nunca debe llevar texto encima — usar solo como acento decorativo o como background con texto graphite-900.
 
 ## Tipografía
 
@@ -136,7 +139,7 @@ Sutilidad. Nada de sombras suaves flotando: preferimos **bordes + sombra mínima
 | `shadow.sm` | `0 1px 2px rgba(17,17,19,0.06)` |
 | `shadow.md` | `0 4px 12px rgba(17,17,19,0.08)` |
 | `shadow.lg` | `0 12px 32px rgba(17,17,19,0.12)` |
-| `shadow.focus` | `0 0 0 3px rgba(242,106,31,0.35)` (outline naranja para foco accesible) |
+| `shadow.focus` | `0 0 0 3px rgba(233,78,27,0.35)` (outline naranja para foco accesible) |
 
 ## Iconografía
 

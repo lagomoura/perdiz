@@ -11,6 +11,10 @@ export default {
             500: 'rgb(var(--brand-orange-500) / <alpha-value>)',
             600: 'rgb(var(--brand-orange-600) / <alpha-value>)',
           },
+          amber: {
+            500: 'rgb(var(--brand-amber-500) / <alpha-value>)',
+            600: 'rgb(var(--brand-amber-600) / <alpha-value>)',
+          },
           graphite: {
             700: 'rgb(var(--brand-graphite-700) / <alpha-value>)',
             900: 'rgb(var(--brand-graphite-900) / <alpha-value>)',

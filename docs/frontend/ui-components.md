@@ -1,4 +1,4 @@
-# UI components — p3rDiz
+# UI components — Aura
 
 Sistema de componentes. Los tokens mencionados acá están definidos en `docs/brand/visual-system.md`. Cualquier componente debe derivarse de tokens; cualquier uso directo de colores hex o tamaños arbitrarios es un bug de revisión.
 
@@ -93,7 +93,7 @@ theme: {
 
 ## Primitivos (shadcn/ui)
 
-Generar vía CLI de shadcn y ajustar a la estética p3rDiz. Variantes mínimas requeridas:
+Generar vía CLI de shadcn y ajustar a la estética Aura. Variantes mínimas requeridas:
 
 ### Button (`components/ui/Button.tsx`)
 
@@ -277,7 +277,7 @@ Número grande, label, delta vs periodo anterior (flecha + porcentaje verde/rojo
 ### `PublicLayout`
 
 Header sticky: logo + nav categorías (desktop) / hamburguesa (mobile) + búsqueda + wishlist + carrito + auth.
-Footer: 3 columnas (p3rDiz / Ayuda / Legales) + redes + nota país.
+Footer: 3 columnas (Aura / Ayuda / Legales) + redes + nota país.
 
 ### `AccountLayout`
 
@@ -293,7 +293,7 @@ Estilo algo más denso: padding 3–4 en vez de 6.
 Ilustración low-poly + título + descripción breve + CTA.
 
 Ejemplos:
-- Carrito vacío → perdiz caminando: "Tu carrito está vacío. Dale una vuelta al catálogo."
+- Carrito vacío → boquilla 3D imprimiendo aire: "Tu carrito está vacío. Dale una vuelta al catálogo."
 - Sin resultados de búsqueda → lupa low-poly: "Nada por acá. Probá con otra palabra."
 - Sin pedidos → caja vacía: "Todavía no hay compras. Cuando encargues, aparecen acá."
 

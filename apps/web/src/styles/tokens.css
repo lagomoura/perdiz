@@ -1,19 +1,22 @@
 :root {
   /* Brand */
-  --brand-orange-500: 242 106 31;
-  --brand-orange-600: 217 85 12;
-  --brand-orange-100: 254 231 214;
+  --brand-orange-500: 233 78 27;
+  --brand-orange-600: 196 60 18;
+  --brand-orange-100: 253 224 211;
+  --brand-amber-500: 244 180 26;
+  --brand-amber-600: 212 152 14;
   --brand-graphite-900: 30 30 30;
   --brand-graphite-700: 58 58 58;
 
-  /* Neutrals */
-  --neutral-0: 255 255 255;
-  --neutral-50: 247 247 248;
-  --neutral-100: 237 237 240;
-  --neutral-200: 217 217 222;
-  --neutral-400: 156 163 175;
-  --neutral-600: 75 85 99;
-  --neutral-900: 17 17 19;
+  /* Neutrals — dark theme by default. Page bg is darker than brand-graphite-900
+     so graphite accents (badges, dark buttons) read as lifted surfaces. */
+  --neutral-0: 12 12 14;
+  --neutral-50: 24 24 28;
+  --neutral-100: 38 38 44;
+  --neutral-200: 60 60 68;
+  --neutral-400: 140 144 152;
+  --neutral-600: 180 184 192;
+  --neutral-900: 240 240 245;
 
   /* State */
   --success-500: 16 185 129;
@@ -28,10 +31,10 @@
   --radius-xl: 20px;
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px rgb(17 17 19 / 0.06);
-  --shadow-md: 0 4px 12px rgb(17 17 19 / 0.08);
-  --shadow-lg: 0 12px 32px rgb(17 17 19 / 0.12);
-  --shadow-focus: 0 0 0 3px rgb(242 106 31 / 0.35);
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 4px 12px rgb(0 0 0 / 0.45);
+  --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.55);
+  --shadow-focus: 0 0 0 3px rgb(233 78 27 / 0.35);
 
   /* Fonts */
   --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;

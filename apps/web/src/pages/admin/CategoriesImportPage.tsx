@@ -153,20 +153,20 @@ export function CategoriesImportPage() {
   return (
     <div className="mx-auto max-w-4xl">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-bold text-brand-graphite-900">
+        <h1 className="font-display text-2xl font-bold text-neutral-900">
           Importar categorías por CSV
         </h1>
         <Link
           to="/admin/categorias"
-          className="text-sm text-neutral-600 hover:text-brand-graphite-900"
+          className="text-sm text-neutral-600 hover:text-neutral-900"
         >
           ← Volver a categorías
         </Link>
       </div>
 
-      <div className="space-y-4 rounded-xl border border-neutral-200 bg-white p-6">
+      <div className="space-y-4 rounded-xl border border-neutral-200 bg-neutral-50 p-6">
         <div>
-          <p className="text-sm text-neutral-700">
+          <p className="text-sm text-neutral-600">
             Subí un CSV con estas columnas. La primera fila es el header.
           </p>
           <ul className="mt-2 text-xs text-neutral-600">
@@ -215,7 +215,7 @@ Dinosaurios,,figuritas-3d,"Figuras de T-Rex, etc",,0,active`}
 
         {parsed && (
           <div>
-            <p className="text-sm text-neutral-700">
+            <p className="text-sm text-neutral-600">
               <strong>{parsed.length}</strong> filas listas para importar.
             </p>
             <div className="mt-2 max-h-72 overflow-auto rounded-lg border border-neutral-200">

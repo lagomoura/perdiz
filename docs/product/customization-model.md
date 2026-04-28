@@ -1,4 +1,4 @@
-# Modelo de personalización — p3rDiz
+# Modelo de personalización — Aura
 
 Modelo de datos y UX para personalizaciones de producto. Diseñado para **agregar tipos nuevos sin migrar schema** (el campo `type` es enum extensible + validador plugable).
 

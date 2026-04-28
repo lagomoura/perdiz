@@ -52,7 +52,7 @@ class Settings(BaseSettings):
     r2_account_id: str = ""
     r2_access_key_id: str = ""
     r2_secret_access_key: str = ""
-    r2_bucket: str = "perdiz-media"
+    r2_bucket: str = "aura-media"
     r2_public_base_url: str = ""
     r2_region: str = "auto"
     r2_endpoint_url: str = ""
@@ -68,8 +68,8 @@ class Settings(BaseSettings):
 
     # Email
     resend_api_key: str = ""
-    email_from: str = "p3rDiz <hola@perdiz.local>"
-    email_support: str = "soporte@perdiz.local"
+    email_from: str = "Aura <hola@aura.local>"
+    email_support: str = "soporte@aura.local"
 
     # Observability
     sentry_dsn: str = ""

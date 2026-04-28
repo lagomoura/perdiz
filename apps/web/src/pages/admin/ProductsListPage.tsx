@@ -62,7 +62,7 @@ export function ProductsListPage() {
   return (
     <div className="mx-auto max-w-6xl">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-bold text-brand-graphite-900">
+        <h1 className="font-display text-2xl font-bold text-neutral-900">
           Productos
         </h1>
         <div className="flex gap-2">
@@ -87,7 +87,7 @@ export function ProductsListPage() {
             className={`rounded-full px-3 py-1 ${
               status === s
                 ? 'bg-brand-graphite-900 text-white'
-                : 'bg-white text-neutral-700 hover:bg-neutral-100'
+                : 'bg-neutral-50 text-neutral-600 hover:bg-neutral-100'
             }`}
           >
             {s === 'all'
@@ -103,7 +103,7 @@ export function ProductsListPage() {
         <select
           value={categoryId}
           onChange={(e) => setCategoryId(e.target.value)}
-          className="rounded-lg border border-neutral-300 bg-white px-3 py-1 text-sm"
+          className="rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-1 text-sm"
         >
           <option value="">Todas</option>
           {categoryOptions.map((o) => (
@@ -120,7 +120,7 @@ export function ProductsListPage() {
         </div>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
+      <div className="overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50">
         {isLoading && <p className="p-6 text-sm text-neutral-500">Cargando…</p>}
         {error && (
           <p className="p-6 text-sm text-error-500">
@@ -152,7 +152,7 @@ export function ProductsListPage() {
                   className="border-b border-neutral-100 last:border-b-0"
                 >
                   <td className="px-4 py-3">
-                    <div className="font-medium text-brand-graphite-900">
+                    <div className="font-medium text-neutral-900">
                       {p.name}
                     </div>
                     <div className="text-xs text-neutral-500">{p.slug}</div>
@@ -207,7 +207,7 @@ export function ProductsListPage() {
 
 function StatusBadge({ status }: { status: ProductStatus }) {
   const map: Record<ProductStatus, { label: string; cls: string }> = {
-    draft: { label: 'Borrador', cls: 'bg-neutral-100 text-neutral-700' },
+    draft: { label: 'Borrador', cls: 'bg-neutral-100 text-neutral-600' },
     active: { label: 'Activo', cls: 'bg-green-100 text-green-800' },
     archived: { label: 'Archivado', cls: 'bg-neutral-100 text-neutral-500' },
   };

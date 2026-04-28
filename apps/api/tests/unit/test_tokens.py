@@ -12,8 +12,8 @@ def test_access_token_round_trip() -> None:
     payload = tokens.decode_access_token(token)
     assert payload["sub"] == "01HWUSER"
     assert payload["role"] == "user"
-    assert payload["iss"] == "perdiz-api"
-    assert payload["aud"] == "perdiz-web"
+    assert payload["iss"] == "aura-api"
+    assert payload["aud"] == "aura-web"
 
 
 def test_decode_invalid_token_raises() -> None:

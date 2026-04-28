@@ -93,9 +93,9 @@ export function ProductImagesPanel({ productId }: { productId: string }) {
   const sorted = images ? [...images].sort((a, b) => a.sortOrder - b.sortOrder) : [];
 
   return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-6">
+    <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-6">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-brand-graphite-900">
+        <h2 className="text-lg font-semibold text-neutral-900">
           Imágenes
         </h2>
         <label>
@@ -159,7 +159,7 @@ export function ProductImagesPanel({ productId }: { productId: string }) {
                   e.target.value !== (img.altText ?? '') &&
                   handleAltChange(img.id, e.target.value)
                 }
-                className="w-full rounded border border-neutral-300 px-2 py-1 text-sm"
+                className="w-full rounded border border-neutral-200 px-2 py-1 text-sm"
               />
               <div className="flex items-center justify-between text-xs text-neutral-600">
                 <span>Orden: {img.sortOrder}</span>

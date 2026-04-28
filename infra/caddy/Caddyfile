@@ -1,7 +1,7 @@
-# Reemplazar PERDIZ_DOMAIN por el dominio definitivo cuando esté disponible.
+# Reemplazar AURA_DOMAIN por el dominio definitivo cuando esté disponible.
 # Ver docs/devops/deployment.md.
 
-{$PERDIZ_DOMAIN:perdiz.local} {
+{$AURA_DOMAIN:aura.local} {
   encode zstd gzip
   header {
     Strict-Transport-Security "max-age=31536000; includeSubDomains"
@@ -15,12 +15,12 @@
   file_server
 }
 
-api.{$PERDIZ_DOMAIN:perdiz.local} {
+api.{$AURA_DOMAIN:aura.local} {
   encode zstd gzip
   reverse_proxy api:8000
 }
 
-uptime.{$PERDIZ_DOMAIN:perdiz.local} {
+uptime.{$AURA_DOMAIN:aura.local} {
   basicauth {
     admin {$UPTIME_BASIC_AUTH_HASH}
   }

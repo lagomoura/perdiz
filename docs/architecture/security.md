@@ -1,4 +1,4 @@
-# Seguridad — p3rDiz
+# Seguridad — Aura
 
 Reglas vinculantes. Cualquier excepción documentada como ADR y aprobada por el usuario.
 
@@ -8,7 +8,7 @@ Reglas vinculantes. Cualquier excepción documentada como ADR y aprobada por el 
 
 - Los tokens de sesión son **JWT firmados con HS256** (HMAC-SHA256).
 - El secreto de firma (`JWT_SECRET`) vive solo en backend, 256 bits aleatorios, rotado anualmente o ante sospecha de fuga.
-- Claims estándar: `sub` (user id ULID), `role`, `iat`, `exp`, `jti`, `iss` (`perdiz-api`), `aud` (`perdiz-web`).
+- Claims estándar: `sub` (user id ULID), `role`, `iat`, `exp`, `jti`, `iss` (`aura-api`), `aud` (`aura-web`).
 
 ### Access token
 
@@ -180,7 +180,7 @@ Content-Security-Policy: default-src 'self'; img-src 'self' https://*.r2.dev dat
                          style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
                          font-src 'self' https://fonts.gstatic.com;
                          script-src 'self';
-                         connect-src 'self' https://api.perdiz.ar https://*.sentry.io;
+                         connect-src 'self' https://api.aura.ar https://*.sentry.io;
                          frame-ancestors 'none';
 ```
 

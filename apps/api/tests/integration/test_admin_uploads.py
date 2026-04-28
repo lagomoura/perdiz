@@ -2,7 +2,7 @@
 
 These tests exercise the full presign → PUT-to-S3 → commit loop with real
 HTTP calls against MinIO. The compose setup seeds a public-read bucket
-named ``perdiz-media`` before the API starts.
+named ``aura-media`` before the API starts.
 """
 
 from __future__ import annotations
@@ -48,7 +48,7 @@ def _make_binary_stl(triangles: int = 2) -> bytes:
     Each triangle is 50 bytes (12 floats * 4 bytes + 2 byte attribute count).
     Header is 80 bytes + 4-byte little-endian triangle count.
     """
-    header = b"p3rdiz test stl".ljust(80, b"\x00")
+    header = b"aura test stl".ljust(80, b"\x00")
     body = b"\x00" * (50 * triangles)
     return header + struct.pack("<I", triangles) + body
 

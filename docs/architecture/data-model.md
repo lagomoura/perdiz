@@ -1,4 +1,4 @@
-# Modelo de datos — p3rDiz
+# Modelo de datos — Aura
 
 Modelo relacional de PostgreSQL 16. Los nombres acá escritos son **vinculantes** para los modelos SQLAlchemy y las migraciones Alembic.
 
@@ -460,6 +460,6 @@ Uploads de usuario (ENGRAVING_IMAGE, USER_FILE):
 Script `infra/scripts/seed.py` idempotente que crea:
 - Rol admin y usuario admin inicial (email y password desde env vars).
 - Categorías iniciales (las siete listadas en `product-spec.md`).
-- Settings default (`site.name = 'p3rDiz'`, `shipping.flat_rate_cents` = valor configurable, etc.).
+- Settings default (`site.name = 'Aura'`, `shipping.flat_rate_cents` = valor configurable, etc.).
 
 Nunca seedear productos de prueba en producción.

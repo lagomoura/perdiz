@@ -14,8 +14,8 @@ from app.config import settings
 from app.exceptions import AuthError
 
 _ALG = "HS256"
-_ISSUER = "perdiz-api"
-_AUDIENCE = "perdiz-web"
+_ISSUER = "aura-api"
+_AUDIENCE = "aura-web"
 
 
 class AccessTokenPayload(TypedDict):

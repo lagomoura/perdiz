@@ -8,7 +8,7 @@
 @layer base {
   html {
     font-family: var(--font-body);
-    color: rgb(var(--brand-graphite-900));
+    color: rgb(var(--neutral-900));
     background: rgb(var(--neutral-0));
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
