@@ -1,0 +1,8 @@
+- [Logo size preference](feedback_logo_size.md) — header logo min h-14/h-16; h-10 is illegible
+- [Test before commit](feedback_test_before_commit.md) — user wants manual verification (esp. UI) before git commit
+- [Ruff format scope](feedback_ruff_format_scope.md) — run `ruff format --check .` from apps/api/ (not just app/ tests/); CI checks the whole tree
+- [Milestones + PR log](project_milestones.md) — shipped PRs, active milestone, pending work
+- [Production VPS](project_production_vps.md) — Hetzner 116.203.202.6, aura3d.duckdns.org, deploy user, /opt/aura layout
+- [Avoid heredocs over SSH](feedback_ssh_heredocs.md) — paste indent breaks EOF marker; use scp/ssh-pipe instead
+- [Frontend deploy to VPS](project_web_deploy.md) — build with VITE_API_BASE_URL inline, rsync + alpine helper to populate web_dist volume
+- [Catalog decisions](project_catalog_decisions.md) — categories N-level, slugs autogen with override
